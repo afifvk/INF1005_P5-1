@@ -28,6 +28,8 @@ if (!isLoggedIn()) {
     flashRedirect('danger', 'Please log in first.', SITE_URL . '/pages/login.php');
 }
 
+
+
 $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
 if (!verifyCsrfToken($token)) {
     if ($isAjax) jsonResponse(false, 'Invalid request. Please refresh the page and try again.');

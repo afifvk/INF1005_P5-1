@@ -8,12 +8,15 @@
 $pageTitle = 'Your Cart';
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/cart_helpers.php';
+require_once __DIR__ . '/../includes/profile_helpers.php';
 
 // Redirect to login if not authenticated
 if (!isLoggedIn()) {
     $_SESSION['flash'] = ['type' => 'info', 'message' => 'Please log in to view your cart.'];
     redirect(SITE_URL . '/pages/login.php');
 }
+
+
 
 $userId = (int)$_SESSION['user_id'];
 $items  = getCartItems($userId);
