@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#f0ede8"/>
+  <rect x="140" y="80" width="120" height="100" rx="8" fill="#d8d2c8"/>
+  <circle cx="200" cy="200" r="0" fill="none"/>
+  <text x="200" y="220" text-anchor="middle" font-family="Georgia, serif"
+        font-size="13" fill="#9a9080" letter-spacing="2">PRODUCT IMAGE</text>
+  <rect x="170" y="100" width="60" height="60" rx="4" fill="#c8c0b0"/>
+  <line x1="170" y1="100" x2="230" y2="160" stroke="#b0a898" stroke-width="1.5"/>
+  <line x1="230" y1="100" x2="170" y2="160" stroke="#b0a898" stroke-width="1.5"/>
+</svg>
