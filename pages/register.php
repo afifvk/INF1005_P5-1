@@ -4,7 +4,6 @@ require_once dirname(__DIR__) . '/config/app.php';
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/includes/auth_helpers.php';
 require_once dirname(__DIR__) . '/includes/cart_helpers.php';
-require_once dirname(__DIR__) . '/includes/header.php';
 
 if (isLoggedIn()) {
     redirect(SITE_URL . '/pages/login.php');
@@ -19,16 +18,15 @@ $formData = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
     if (!verifyCsrfToken($token)) {
         $errors[] = 'Invalid form token. Please refresh and try again.';
     } else {
         $firstName = trim(isset($_POST['first_name']) ? $_POST['first_name'] : '');
-        $lastName  = trim(isset($_POST['last_name'])  ? $_POST['last_name']  : '');
-        $address   = trim(isset($_POST['address'])    ? $_POST['address']    : '');
-        $email     = trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
-        $password  = isset($_POST['password'])         ? $_POST['password']         : '';
+        $lastName  = trim(isset($_POST['last_name']) ? $_POST['last_name'] : '');
+        $address   = trim(isset($_POST['address']) ? $_POST['address'] : '');
+        $email     = normalizeEmail(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
+        $password  = isset($_POST['password']) ? $_POST['password'] : '';
         $confirm   = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
 
         $formData = [
@@ -40,18 +38,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $errors = validateRegistration($firstName, $lastName, $email, $password, $confirm);
 
+        if (empty($errors) && hasRecaptchaConfig()) {
+            $recaptchaResult = verifyRecaptchaToken($_POST['g-recaptcha-response'] ?? '', $_SERVER['REMOTE_ADDR'] ?? '');
+            if (!$recaptchaResult['success']) {
+                $errors[] = $recaptchaResult['message'];
+            }
+        }
+
         if (empty($errors)) {
             $result = registerUser($firstName, $lastName, $address, $email, $password);
 
-            if ($result === true) {
-                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Account created! Please log in.'];
-                redirect(SITE_URL . '/pages/login.php');
+            if (($result['status'] ?? '') === 'pending') {
+                $_SESSION['pending_verification_email'] = $result['email'] ?? $email;
+                redirect(SITE_URL . '/pages/verify_pending.php?email=' . urlencode($result['email'] ?? $email));
             } else {
-                $errors[] = $result;
+                $errors[] = $result['message'] ?? 'Unable to create account.';
             }
         }
     }
 }
+
+require_once dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <section class="section-pad" aria-labelledby="register-heading">
@@ -81,19 +88,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
-                        <!-- First Name (optional) + Last Name (required) -->
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label for="first_name" class="form-label">First Name</label>
+                                <label for="first_name" class="form-label">
+                                    First Name <span class="text-danger">*</span>
+                                </label>
                                 <input type="text"
                                        id="first_name"
                                        name="first_name"
                                        class="form-control"
+                                       placeholder="John"
                                        value="<?= e($formData['first_name']) ?>"
-                                       maxlength="80"
-                                       autocomplete="given-name"
-                                       placeholder="Optional">
+                                       required>
                             </div>
+
                             <div class="col-sm-6">
                                 <label for="last_name" class="form-label">
                                     Last Name <span class="text-danger" aria-hidden="true">*</span>
@@ -111,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         </div>
 
-                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">
                                 Email Address <span class="text-danger" aria-hidden="true">*</span>
@@ -129,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="invalid-feedback" id="email-feedback"></div>
                         </div>
 
-                        <!-- Address (optional) -->
                         <div class="mb-3">
                             <label for="address" class="form-label">Delivery Address</label>
                             <textarea id="address"
@@ -140,27 +146,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                       placeholder="Optional — 123 Main Street, City, Postcode"><?= e($formData['address']) ?></textarea>
                         </div>
 
-                        <!-- Password -->
                         <div class="mb-3">
                             <label for="password" class="form-label">
                                 Password <span class="text-danger" aria-hidden="true">*</span>
                             </label>
+                            <div class="form-text mb-2">
+                                Must contain at least 10 characters, one uppercase letter, one lowercase letter, one number, and one special character.
+                            </div>
                             <input type="password"
                                    id="password"
                                    name="password"
                                    class="form-control"
-                                   minlength="8"
-                                   autocomplete="new-password"
+                                   minlength="10"
                                    required
                                    aria-required="true"
-                                   aria-describedby="pw-feedback pw-hint">
-                            <div class="invalid-feedback" id="pw-feedback"></div>
-                            <div class="form-text" id="pw-hint">
-                                Min. 8 characters, one uppercase letter, one number.
-                            </div>
+                                   autocomplete="new-password"
+                                   aria-describedby="password-help"
+                                   placeholder="Password">
                         </div>
 
-                        <!-- Confirm Password -->
                         <div class="mb-4">
                             <label for="confirm_password" class="form-label">
                                 Confirm Password <span class="text-danger" aria-hidden="true">*</span>
@@ -169,27 +173,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    id="confirm_password"
                                    name="confirm_password"
                                    class="form-control"
-                                   autocomplete="new-password"
                                    required
                                    aria-required="true"
-                                   aria-describedby="confirm-feedback">
-                            <div class="invalid-feedback" id="confirm-feedback"></div>
+                                   autocomplete="new-password"
+                                   placeholder="Confirm Password">
                         </div>
 
+                        <?php if (hasRecaptchaConfig()): ?>
+                        <div class="mb-3 text-center">
+                            <div class="d-inline-block">
+                                <div class="g-recaptcha" data-sitekey="<?= e(RECAPTCHA_SITE_KEY) ?>"></div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
                         <button type="submit" class="btn-store w-100 py-3 rounded">
-                            Create Account <i class="bi bi-person-check ms-1" aria-hidden="true"></i>
+                            Create Account <i class="bi bi-person-plus ms-1" aria-hidden="true"></i>
                         </button>
                     </form>
 
                     <hr class="divider-line">
 
                     <p class="text-center text-muted small mb-0">
-                        Already have an account? <a href="login.php">Sign in</a>
+                        Already have an account?
+                        <a href="login.php">Log in here</a>
                     </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<?php if (hasRecaptchaConfig()): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <?php require_once dirname(__DIR__) . '/includes/footer.php'; ?>
