@@ -1,20 +1,10 @@
 <?php
-/**
- * pages/login.php
- * Handles GET (display form) and POST (process login).
- *
- * SECURITY:
- * - CSRF token validated on POST
- * - password_verify() used (timing-safe)
- * - Session regenerated on successful login
- * - Generic error message prevents username enumeration
- */
-
 $pageTitle = 'Login';
+require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 
-// Redirect if already logged in
 if (isLoggedIn()) {
     redirect(SITE_URL . '/index.php');
 }
@@ -23,13 +13,10 @@ $errors = [];
 $emailVal = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // CSRF check
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Invalid form token. Please refresh and try again.';
     } else {
-        // Sanitize inputs — trim and filter
-        $email    = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $email    = normalizeEmail(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
         $password = $_POST['password'] ?? '';
         $emailVal = $email;
 
@@ -39,10 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = loginUser($email, $password);
 
             if ($result === true) {
-                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . e($_SESSION['username']) . '!'];
+                $name = trim((string) ($_SESSION['first_name'] ?? '') . ' ' . (string) ($_SESSION['last_name'] ?? ''));
+                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . trim($name) . '!'];
                 redirect(SITE_URL . '/index.php');
             } else {
-                $errors[] = $result; // Generic: "Invalid email or password."
+                $errors[] = $result;
             }
         }
     }
@@ -74,10 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                           novalidate
                           aria-label="Login form">
 
-                        <!-- CSRF Token (hidden) -->
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
-                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>
                             <input type="email"
@@ -92,8 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="invalid-feedback" id="email-hint">Please enter a valid email.</div>
                         </div>
 
-                        <!-- Password -->
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password"
                                    id="password"

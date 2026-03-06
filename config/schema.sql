@@ -1,7 +1,6 @@
 -- ============================================================
 -- Store Database Schema
 -- Run this once to set up the database.
--- All tables use InnoDB for foreign key support.
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS store_db
@@ -10,24 +9,24 @@ CREATE DATABASE IF NOT EXISTS store_db
 
 USE store_db;
 
--- ------------------------------------------------------------
--- USERS TABLE
--- Stores registered customer accounts.
--- Passwords stored as bcrypt hashes — NEVER plain text.
--- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS users (
-    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    username     VARCHAR(50)  NOT NULL UNIQUE,
-    email        VARCHAR(150) NOT NULL UNIQUE,
-    password     VARCHAR(255) NOT NULL,        -- bcrypt hash
-    created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_email (email)
+    id                         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    first_name                 VARCHAR(80)  NULL,
+    last_name                  VARCHAR(80)  NOT NULL,
+    address                    TEXT         NULL,
+    email                      VARCHAR(150) NOT NULL UNIQUE,
+    password                   VARCHAR(255) NOT NULL,
+    role                       ENUM('customer', 'admin') NOT NULL DEFAULT 'customer',
+    is_verified                TINYINT(1)   NOT NULL DEFAULT 0,
+    verification_token_hash    CHAR(64)     NULL,
+    verification_expires_at    DATETIME     NULL,
+    verification_last_sent_at  DATETIME     NULL,
+    verified_at                DATETIME     NULL,
+    created_at                 DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_verification_token_hash (verification_token_hash)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------
--- PRODUCTS TABLE
--- Stores the product catalogue.
--- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS products (
     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(150)   NOT NULL,
@@ -39,10 +38,6 @@ CREATE TABLE IF NOT EXISTS products (
     INDEX idx_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------
--- CART TABLE
--- One cart row per user session.
--- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS cart (
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id    INT UNSIGNED NOT NULL,
@@ -51,10 +46,6 @@ CREATE TABLE IF NOT EXISTS cart (
     UNIQUE KEY unique_user_cart (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------
--- CART ITEMS TABLE
--- Line items inside a cart.
--- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS cart_items (
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     cart_id    INT UNSIGNED NOT NULL,
@@ -66,18 +57,10 @@ CREATE TABLE IF NOT EXISTS cart_items (
     UNIQUE KEY unique_cart_product (cart_id, product_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------
--- SEED DATA — Sample Products
--- ------------------------------------------------------------
 INSERT INTO products (name, description, price, image, stock) VALUES
 ('Item One',   'A premium quality product with excellent durability and modern design. Perfect for everyday use.', 29.99, 'item1.jpg', 50),
 ('Item Two',   'An elegant solution for your daily needs. Crafted with care and built to last for years to come.', 49.99, 'item2.jpg', 30),
 ('Item Three', 'Our flagship product offering outstanding performance and value. Trusted by thousands of customers.', 79.99, 'item3.jpg', 20);
 
--- ------------------------------------------------------------
--- SEED DATA — Demo Admin User
--- Password: Admin1234!  (bcrypt hash below — change in production)
--- Generate your own: php -r "echo password_hash('YourPassword', PASSWORD_BCRYPT);"
--- ------------------------------------------------------------
-INSERT INTO users (username, email, password) VALUES
-('admin', 'admin@store.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+INSERT INTO users (first_name, last_name, email, password, role, is_verified, verified_at) VALUES
+('Admin', 'User', 'admin@store.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, NOW());

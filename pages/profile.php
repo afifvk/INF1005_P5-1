@@ -128,12 +128,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         <!-- First (optional) + Last (required) -->
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label for="first_name" class="form-label">First Name</label>
+                                <label for="first_name" class="form-label">
+                                    First Name <span class="text-danger">*</span>
+                                </label>
                                 <input type="text" id="first_name" name="first_name"
                                        class="form-control"
                                        value="<?= e($user['first_name'] ?? '') ?>"
                                        maxlength="80"
-                                       placeholder="Optional">
+                                       placeholder="required">
                             </div>
                             <div class="col-sm-6">
                                 <label for="last_name" class="form-label">

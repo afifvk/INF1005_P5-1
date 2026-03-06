@@ -3,9 +3,20 @@
  * Application Configuration
  */
 
-define('SITE_NAME', 'Store');
-define('SITE_URL', 'http://35.212.189.249');  // ← FIXED: your server's IP, no /store suffix
+define('SITE_NAME', 'Tea');
+define('SITE_URL', 'http://35.212.189.249');
 define('SITE_VERSION', '1.0.0');
+
+// Mail configuration
+define('MAIL_FROM_NAME', 'Tea Support');
+define('MAIL_FROM_ADDRESS', 'Uniw2500518@gmail.com');
+define('VERIFICATION_EXPIRY_MINUTES', 30);
+define('VERIFICATION_RESEND_COOLDOWN_SECONDS', 60);
+define('SMTP_HOST', 'smtp.gmail.com');
+define('SMTP_PORT', 587);
+define('SMTP_USERNAME', 'Uniw2500518@gmail.com');
+define('SMTP_PASSWORD', 'lcyzcxanmmycbpca');
+define('SMTP_ENCRYPTION', 'tls');
 
 // Session hardening
 ini_set('session.cookie_httponly', 1);
