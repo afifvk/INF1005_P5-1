@@ -21,11 +21,33 @@ if (!isLoggedIn()) {
 $userId = (int)$_SESSION['user_id'];
 $items  = getCartItems($userId);
 $total  = getCartTotal($userId);
+$user   = getUserById($userId);
 ?>
 
 <section class="section-pad" aria-labelledby="cart-heading">
+    
     <div class="container">
-
+        <!-- Shipping Address Banner -->
+        <div class="mb-4 p-3 rounded border" aria-label="Shipping address">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">
+                <i class="bi bi-truck me-1" aria-hidden="true"></i> Shipping Address
+            </p>
+            <?php if (!empty($user['address'])): ?>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <p class="mb-0"><?= nl2br(e($user['address'])) ?></p>
+                    <a href="profile.php" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Edit
+                    </a>
+                </div>
+            <?php else: ?>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <p class="mb-0 text-muted">No shipping address on file.</p>
+                    <a href="profile.php" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Add Address
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
         <!-- Breadcrumb -->
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="breadcrumb">
@@ -33,6 +55,8 @@ $total  = getCartTotal($userId);
                 <li class="breadcrumb-item active" aria-current="page">Cart</li>
             </ol>
         </nav>
+
+        
 
         <h1 id="cart-heading" class="mb-4">
             <i class="bi bi-cart3 me-2" aria-hidden="true"></i>
