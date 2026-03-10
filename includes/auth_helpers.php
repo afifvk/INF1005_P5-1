@@ -61,7 +61,7 @@ function logoutUser() {
 
 function isAdmin() {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-}
+}// for admin access control ?? -ws
 
 /**
  * Validate registration inputs.
