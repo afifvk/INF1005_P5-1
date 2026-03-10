@@ -367,6 +367,7 @@ img {
     border-radius: var(--radius-lg);
     padding: 2.5rem;
     box-shadow: var(--shadow-md);
+    color: var(--color-text);
 }
 
 .form-label {
@@ -599,4 +600,77 @@ img {
 @media (max-width: 576px) {
     .hero-title { font-size: 2rem; }
     .feature-item { padding: 0.5rem 0; }
+}
+
+/* ---------- Quiz side box (hero) ---------- */
+.quiz-side-box {
+    margin-top: 1rem;
+    border: 2px solid rgba(200,233,212,0.6);
+    background: linear-gradient(180deg, rgba(220,244,229,0.35), rgba(255,255,255,0.02));
+    border-radius: var(--radius-md);
+    display: inline-block;
+    text-align: left;
+    padding: 1rem;
+    max-width: 320px;
+}
+.quiz-side-inner h3 { margin-top: 0; margin-bottom: 0.5rem; color: var(--color-accent); }
+.btn-quiz-cta { width: 100%; margin-top: 0.5rem; }
+
+/* Full-size quiz variant to occupy hero image area */
+.quiz-full {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 2.25rem 2.25rem;
+    min-height: 420px;
+    background: linear-gradient(180deg, rgba(220,244,229,0.18), rgba(255,255,255,0.02));
+    border-radius: var(--radius-lg);
+}
+.quiz-full .quiz-side-inner { max-width: 360px; }
+
+/* Nudge white panels lower so they sit visually below the green hero */
+.quiz-full .form-wrapper,
+.quiz-full #quiz-results {
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 992px) {
+    .quiz-full { padding-top: 2rem; min-height: auto; }
+}
+
+/* New: center quiz and show form + results side-by-side on wide screens */
+.quiz-panel-wrapper {
+    display: flex;
+    gap: 2.5rem;               /* more breathing room between panels */
+    justify-content: center;   /* center the pair */
+    align-items: flex-start;
+    max-width: 1100px;         /* constrain group so panels don't span too wide */
+    margin: 0 auto;            /* center within the container */
+    padding-top: 1.5rem;
+}
+.quiz-panel {
+    width: 440px;              /* wider panels to use space */
+    flex: 0 0 440px;
+}
+.quiz-panel .form-wrapper { margin-top: 0; }
+
+@media (max-width: 1200px) {
+    .quiz-panel { width: 380px; flex: 0 0 380px; }
+    .quiz-panel-wrapper { gap: 2rem; }
+}
+
+@media (max-width: 992px) {
+    .quiz-panel-wrapper { flex-direction: column; align-items: center; max-width: 720px; }
+    .quiz-panel { width: 100%; flex: none; }
+    .quiz-panel .form-wrapper { padding: 1.25rem; }
+}
+
+/* ---------- Quiz form & results ---------- */
+.visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+#quiz-results .value-card { display: block; padding: 1rem; }
+
+@media (max-width: 992px) {
+    .quiz-side-box { max-width: 100%; }
 }
