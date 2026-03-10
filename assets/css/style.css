@@ -745,31 +745,50 @@ img {
     .quiz-full { padding-top: 2rem; min-height: auto; }
 }
 
-/* New: center quiz and show form + results side-by-side on wide screens */
+
 .quiz-panel-wrapper {
     display: flex;
-    gap: 2.5rem;               
-    justify-content: center;   
-    align-items: flex-start;
-    max-width: 1100px;         
-    margin: 0 auto;            
-    padding-top: 1.5rem;
+    gap: 1.75rem;              
+    align-items: stretch;       
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-top: 1.25rem;
 }
 .quiz-panel {
-    width: 440px;             
-    flex: 0 0 440px;
+    width: 420px;
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
 }
-.quiz-panel .form-wrapper { margin-top: 0; }
+
+
+.quiz-panel .form-wrapper,
+#quiz-results .form-wrapper {
+    min-height: 520px;             
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;  
+    padding: 1.25rem;
+}
+
+
+.quiz-panel .form-wrapper .d-flex,
+.quiz-panel .form-wrapper .d-flex { margin-top: 0.5rem; }
+
+
+#quiz-results .row { justify-content: center; }
+#quiz-results .value-card { margin: 0.5rem auto; max-width: 220px; }
 
 @media (max-width: 1200px) {
     .quiz-panel { width: 380px; flex: 0 0 380px; }
-    .quiz-panel-wrapper { gap: 2rem; }
+    .quiz-panel-wrapper { gap: 1.5rem; }
 }
 
 @media (max-width: 992px) {
     .quiz-panel-wrapper { flex-direction: column; align-items: center; max-width: 720px; }
     .quiz-panel { width: 100%; flex: none; }
-    .quiz-panel .form-wrapper { padding: 1.25rem; }
+    .quiz-panel .form-wrapper { padding: 1rem; min-height: auto; display:block; }
+    #quiz-results .form-wrapper { padding: 1rem; min-height: auto; display:block; }
 }
 
 /* ---------- Quiz form & results ---------- */
@@ -795,7 +814,6 @@ visually-hidden { position: absolute !important; height: 1px; width: 1px; overfl
     color: var(--color-text);
 }
 
-/* Make the Save button fit the card and wrap gracefully on small screens. */
 #quiz-results .value-card .btn-store.save-reco {
     display: block;
     width: calc(100% - 1.5rem);
