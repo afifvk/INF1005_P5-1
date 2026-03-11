@@ -123,10 +123,6 @@ function isAdmin() {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 }// for admin access control ?? -ws
 
-function normalizeEmail($email) {
-    return strtolower(trim((string) $email));
-}
-
 function generateVerificationTokenPair() {
     $plain = bin2hex(random_bytes(32));
     return [
@@ -332,10 +328,6 @@ function verifyEmailToken($plainToken) {
     $stmt->execute([$user['id']]);
 
     return ['status' => 'success', 'message' => 'Your email has been verified successfully. You can now log in.'];
-}
-
-function normalizeEmail($email) {
-    return strtolower(trim((string) $email));
 }
 
 function generateVerificationTokenPair() {
