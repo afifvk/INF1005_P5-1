@@ -34,22 +34,25 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
             </div>
             <div class="col-lg-5 offset-lg-1">
                 <div class="hero-image-block">
-                    <svg width="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"
-                         role="img" aria-label="Store decorative graphic">
-                        <rect width="400" height="300" rx="12" fill="rgba(255,255,255,0.05)"/>
-                        <rect x="40" y="40" width="140" height="120" rx="8" fill="rgba(200,169,110,0.3)"/>
-                        <rect x="220" y="40" width="140" height="120" rx="8" fill="rgba(200,169,110,0.2)"/>
-                        <rect x="40" y="180" width="320" height="80" rx="8" fill="rgba(200,169,110,0.15)"/>
-                        <text x="200" y="30" text-anchor="middle" fill="rgba(200,169,110,0.6)"
-                              font-size="12" font-family="Georgia">CURATED COLLECTION</text>
-                        <text x="200" y="225" text-anchor="middle" fill="rgba(255,255,255,0.5)"
-                              font-size="14">★★★★★  Trusted by customers</text>
-                    </svg>
+                    <div class="quiz-side-box quiz-full" aria-hidden="false">
+                        <div class="quiz-side-inner">
+                            <h3>Create Your Personalitea</h3>
+                            <p>Take our 4-question quiz to discover the tea that fits you.</p>
+                            <button id="start-quiz-btn" class="btn-store btn-quiz-cta">Create your own personalitea</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    // Expose login state and CSRF token to quiz JS
+    window.__APP__ = window.__APP__ || {};
+    window.__APP__.isLoggedIn = <?= isLoggedIn() ? 'true' : 'false' ?>;
+    window.__APP__.csrfToken  = '<?= $csrf ?>';
+</script>
 
 <!-- FEATURES STRIP -->
 <section class="features-strip" aria-label="Store features">
@@ -96,6 +99,59 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
 </section>
 
 <!-- FEATURED PRODUCTS -->
+<section id="quiz-section" class="section-pad" aria-labelledby="quiz-heading">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="quiz-panel-wrapper">
+                    <div class="quiz-panel quiz-panel-form">
+                        <form id="personalitea-quiz" class="form-wrapper" aria-describedby="quiz-desc" style="display:none;" aria-hidden="true">
+                            <h3 id="quiz-heading">Create Your Personalitea</h3>
+                            <div id="quiz-desc" class="visually-hidden">This form is a demo quiz that maps answers to suggested products.</div>
+
+                            <fieldset class="mb-3">
+                                <legend class="form-label">1) How do you like your flavour profile?</legend>
+                                <label><input type="radio" name="q1" value="light" required> Light &amp; floral</label><br>
+                                <label><input type="radio" name="q1" value="earthy"> Earthy &amp; robust</label><br>
+                                <label><input type="radio" name="q1" value="sweet"> Sweet &amp; aromatic</label>
+                            </fieldset>
+
+                            <fieldset class="mb-3">
+                                <legend class="form-label">2) When do you usually enjoy tea?</legend>
+                                <label><input type="radio" name="q2" value="morning" required> Morning boost</label><br>
+                                <label><input type="radio" name="q2" value="afternoon"> Afternoon calm</label><br>
+                                <label><input type="radio" name="q2" value="evening"> Evening relaxation</label>
+                            </fieldset>
+
+                            <fieldset class="mb-3">
+                                <legend class="form-label">3) Choose a mood:</legend>
+                                <label><input type="radio" name="q3" value="adventurous" required> Adventurous</label><br>
+                                <label><input type="radio" name="q3" value="cozy"> Cozy</label><br>
+                                <label><input type="radio" name="q3" value="focused"> Focused</label>
+                            </fieldset>
+
+                            <fieldset class="mb-3">
+                                <legend class="form-label">4) Pick a favourite note:</legend>
+                                <label><input type="radio" name="q4" value="citrus" required> Citrus</label><br>
+                                <label><input type="radio" name="q4" value="vanilla"> Vanilla</label><br>
+                                <label><input type="radio" name="q4" value="smoky"> Smoky</label>
+                            </fieldset>
+
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn-store">See my result</button>
+                                <button type="button" id="quiz-cancel" class="btn-store-outline">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="quiz-panel quiz-panel-results">
+                        <div id="quiz-results" style="display:none;margin-top:0;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <section class="section-pad" aria-labelledby="products-heading">
     <div class="container">
         <div class="section-header">

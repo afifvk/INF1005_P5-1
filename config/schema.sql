@@ -62,5 +62,25 @@ INSERT INTO products (name, description, price, image, stock) VALUES
 ('Item Two',   'An elegant solution for your daily needs. Crafted with care and built to last for years to come.', 49.99, 'item2.jpg', 30),
 ('Item Three', 'Our flagship product offering outstanding performance and value. Trusted by thousands of customers.', 79.99, 'item3.jpg', 20);
 
-INSERT INTO users (first_name, last_name, email, password, role, is_verified, verified_at) VALUES
-('Admin', 'User', 'admin@store.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, NOW());
+-- ------------------------------------------------------------
+-- SEED DATA — Demo Admin User
+-- Password: Admin1234!  (bcrypt hash below — change in production)
+-- Generate your own: php -r "echo password_hash('YourPassword', PASSWORD_BCRYPT);"
+-- ------------------------------------------------------------
+INSERT INTO users (username, email, password) VALUES
+('admin', 'admin@store.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+
+-- ------------------------------------------------------------
+-- RECOMMENDATIONS TABLE
+-- Stores user quiz recommendations 
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS recommendations (
+    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id      INT UNSIGNED NOT NULL,
+    product_id   INT UNSIGNED NULL,
+    product_title VARCHAR(150) NULL,
+    answers_json TEXT,
+    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

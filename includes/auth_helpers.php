@@ -121,7 +121,7 @@ function logoutUser() {
 
 function isAdmin() {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-}
+}// for admin access control ?? -ws
 
 function normalizeEmail($email) {
     return strtolower(trim((string) $email));

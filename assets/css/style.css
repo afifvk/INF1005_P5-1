@@ -135,11 +135,116 @@ img {
 
 .hero-image-block {
     background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-lg);
-    padding: 2rem;
+    padding: 2.75rem; /* more room so inner card centers with equal borders */
     text-align: center;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
+    position: relative;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+    display: flex; /* center inner content both axis */
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Hero Quiz / Personalitea ---------- */
+.hero-image-block .quiz-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* center content inside the inner card */
+    width: 360px; /* fixed width for equal inner borders */
+    max-width: calc(100% - 60px);
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.015));
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: calc(var(--radius-lg) - 6px);
+    padding: 1.8rem 1.8rem;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 18px rgba(0,0,0,0.12);
+    color: rgba(255,255,255,0.95);
+    gap: 0.9rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.hero-image-block .quiz-card h3 {
+    font-size: 1.4rem;
+    margin: 0 0 0.25rem 0;
+    color: rgba(255,255,255,0.95);
+    font-weight: 700;
+    line-height: 1.02;
+}
+
+.hero-image-block .quiz-card p.lead {
+    margin: 0 0 1rem 0;
+    color: rgba(255,255,255,0.82);
+    font-size: 0.98rem;
+    line-height: 1.45;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+.hero-image-block .quiz-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.75rem 0 0 0; /* keep a balanced gap */
+    padding: 0.85rem 1.2rem;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    box-sizing: border-box;
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-word;
+}
+
+
+.hero-image-block { text-align: center; }
+
+.hero-image-block::after {
+    content: '';
+    position: absolute;
+    inset: 18px; /* larger inset yields equal visible border around inner card */
+    border-radius: calc(var(--radius-lg) - 6px);
+    pointer-events: none;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.10);
+    opacity: 0.18; /* softer halo */
+    mix-blend-mode: multiply;
+}
+
+
+.quiz-panel-wrapper {
+    display: flex;
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+.quiz-panel {
+    flex: 1 1 0;
+}
+
+@media (min-width: 992px) {
+    .hero {
+        padding-top: 5.5rem;
+        padding-bottom: 4.5rem;
+    }
+    .hero-image-block {
+        padding: 2.25rem;
+        max-width: 520px; 
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero {
+        padding: 3.5rem 0 2.5rem;
+    }
+    .hero-image-block .quiz-card {
+        max-width: 100%;
+        padding: 1.25rem;
+    }
+    .hero-subtitle { max-width: 100%; }
 }
 
 /* ---------- Buttons ---------- */
@@ -367,6 +472,7 @@ img {
     border-radius: var(--radius-lg);
     padding: 2.5rem;
     box-shadow: var(--shadow-md);
+    color: var(--color-text);
 }
 
 .form-label {
@@ -599,4 +705,127 @@ img {
 @media (max-width: 576px) {
     .hero-title { font-size: 2rem; }
     .feature-item { padding: 0.5rem 0; }
+}
+
+/* ---------- Quiz side box (hero) ---------- */
+.quiz-side-box {
+    margin-top: 1rem;
+    border: 2px solid rgba(200,233,212,0.6);
+    background: linear-gradient(180deg, rgba(220,244,229,0.35), rgba(255,255,255,0.02));
+    border-radius: var(--radius-md);
+    display: inline-block;
+    text-align: left;
+    padding: 1rem;
+    max-width: 320px;
+}
+.quiz-side-inner h3 { margin-top: 0; margin-bottom: 0.5rem; color: var(--color-accent); }
+.btn-quiz-cta { width: 100%; margin-top: 0.5rem; }
+
+/* Full-size quiz variant to occupy hero image area */
+.quiz-full {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 2.25rem 2.25rem;
+    min-height: 420px;
+    background: linear-gradient(180deg, rgba(220,244,229,0.18), rgba(255,255,255,0.02));
+    border-radius: var(--radius-lg);
+}
+.quiz-full .quiz-side-inner { max-width: 360px; }
+
+/* Nudge white panels lower so they sit visually below the green hero */
+.quiz-full .form-wrapper,
+.quiz-full #quiz-results {
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 992px) {
+    .quiz-full { padding-top: 2rem; min-height: auto; }
+}
+
+
+.quiz-panel-wrapper {
+    display: flex;
+    gap: 1.75rem;              
+    align-items: stretch;       
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-top: 1.25rem;
+}
+.quiz-panel {
+    width: 420px;
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.quiz-panel .form-wrapper,
+#quiz-results .form-wrapper {
+    min-height: 520px;             
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;  
+    padding: 1.25rem;
+}
+
+
+.quiz-panel .form-wrapper .d-flex,
+.quiz-panel .form-wrapper .d-flex { margin-top: 0.5rem; }
+
+
+#quiz-results .row { justify-content: center; }
+#quiz-results .value-card { margin: 0.5rem auto; max-width: 220px; }
+
+@media (max-width: 1200px) {
+    .quiz-panel { width: 380px; flex: 0 0 380px; }
+    .quiz-panel-wrapper { gap: 1.5rem; }
+}
+
+@media (max-width: 992px) {
+    .quiz-panel-wrapper { flex-direction: column; align-items: center; max-width: 720px; }
+    .quiz-panel { width: 100%; flex: none; }
+    .quiz-panel .form-wrapper { padding: 1rem; min-height: auto; display:block; }
+    #quiz-results .form-wrapper { padding: 1rem; min-height: auto; display:block; }
+}
+
+/* ---------- Quiz form & results ---------- */
+visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+
+/* Quiz results — keep recommendation cards self-contained and prevent CTA overflow */
+#quiz-results .value-card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius-lg) - 6px);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+#quiz-results .value-card h4 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    margin-bottom: 0.35rem;
+    color: var(--color-text);
+}
+
+#quiz-results .value-card .btn-store.save-reco {
+    display: block;
+    width: calc(100% - 1.5rem);
+    max-width: 100%;
+    margin: 0.6rem auto 0;
+    padding: 0.6rem 0.9rem;
+    box-sizing: border-box;
+    white-space: normal;
+    word-break: break-word;
+}
+
+
+@media (max-width: 992px) {
+    .quiz-side-box { max-width: 100%; }
 }

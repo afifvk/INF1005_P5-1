@@ -205,4 +205,171 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // ── Personalitea Quiz: show/hide and basic result mapping ──
+    var startBtn = document.getElementById('start-quiz-btn');
+    var quizSection = document.getElementById('quiz-section');
+    var quizForm = document.getElementById('personalitea-quiz');
+    var quizResults = document.getElementById('quiz-results');
+    var quizCancel = document.getElementById('quiz-cancel');
+    var APP = window.__APP__ || { isLoggedIn: false, csrfToken: '' };
+
+    function showQuiz() {
+        // Show the actual quiz form (moved below the hero)
+        if (quizForm) {
+            quizForm.style.display = '';
+            quizForm.setAttribute('aria-hidden', 'false');
+        }
+        if (quizResults) quizResults.style.display = 'none';
+        // focus first input for accessibility
+        try {
+            var firstInput = quizForm && quizForm.querySelector('input[type="radio"], input[type="text"], select, textarea');
+            if (firstInput) firstInput.focus();
+        } catch (e) {}
+        window.location.hash = '#quiz-heading';
+    }
+    function hideQuiz() {
+        if (quizForm) {
+            quizForm.style.display = 'none';
+            quizForm.setAttribute('aria-hidden', 'true');
+            try { quizForm.reset(); } catch (e) {}
+        }
+        if (quizResults) quizResults.style.display = 'none';
+    }
+
+    if (startBtn) startBtn.addEventListener('click', function() { showQuiz(); });
+    if (quizCancel) quizCancel.addEventListener('click', function() { hideQuiz(); });
+
+    if (quizForm) {
+        quizForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var data = new FormData(quizForm);
+            var answers = {
+                q1: data.get('q1'),
+                q2: data.get('q2'),
+                q3: data.get('q3'),
+                q4: data.get('q4')
+            };
+
+            // Produce a tea personality and other suggested types.
+            var score = 0;
+            if (answers.q1 === 'light') score += 1;
+            if (answers.q1 === 'earthy') score += 2;
+            if (answers.q1 === 'sweet') score += 3;
+            if (answers.q2 === 'morning') score += 2;
+            if (answers.q2 === 'afternoon') score += 1;
+            if (answers.q2 === 'evening') score += 3;
+            if (answers.q3 === 'adventurous') score += 3;
+            if (answers.q3 === 'cozy') score += 1;
+            if (answers.q3 === 'focused') score += 2;
+            if (answers.q4 === 'citrus') score += 1;
+            if (answers.q4 === 'vanilla') score += 2;
+            if (answers.q4 === 'smoky') score += 3;
+
+            var personality = 'Balanced Sipper';
+            var suggestions = [];
+            if (score <= 5) {
+                personality = 'Bright & Floral';
+                suggestions = [
+                    { title: 'Jasmine Blossom', desc: 'A light, floral cup.' },
+                    { title: 'Citrus Earl', desc: 'Bright notes for daytime.' }
+                ];
+            } else if (score <= 8) {
+                personality = 'Cozy Comfort';
+                suggestions = [
+                    { title: 'Vanilla Chai', desc: 'Warm and sweet.' },
+                    { title: 'Honey Rooibos', desc: 'Smooth, caffeine-free option.' }
+                ];
+            } else {
+                personality = 'Bold Explorer';
+                suggestions = [
+                    { title: 'Smoky Lapsang', desc: 'Deep and smoky flavors.' },
+                    { title: 'Earthy Pu-erh', desc: 'Rich and grounding.' }
+                ];
+            }
+
+            // Render results. Include a link to browse full catalog.
+            if (quizResults) {
+                quizResults.style.display = '';
+                var html = '<div class="form-wrapper">'
+                    + '<h3>Your Personalitea: ' + personality + '</h3>'
+                    + '<p>Based on your answers, we suggest the following:</p>'
+                    + '<div class="row g-3">';
+
+                suggestions.forEach(function(s, idx) {
+                    html += '<div class="col-md-6"><div class="value-card">'
+                        + '<h4>' + s.title + '</h4>'
+                        + '<p class="text-muted">' + s.desc + '</p>';
+
+                    // If logged in, allow saving the first suggestion
+                    if (APP.isLoggedIn) {
+                        html += '<div class="mt-2">'
+                            + '<button class="btn-store save-reco" data-product="' + encodeURIComponent(s.title) + '" data-idx="' + idx + '">Save recommendation</button>'
+                            + '</div>';
+                    }
+
+                    html += '<a class="btn-store-outline mt-2 d-inline-block" href="/pages/products.php">View similar</a>'
+                        + '</div></div>';
+                });
+
+                html += '</div>'
+                    + '<div class="text-center" style="margin-top:1rem;">'
+                    + '<a class="btn-gold" href="/pages/products.php">Browse for more</a>'
+                    + '</div>';
+
+                // If not logged in, show CTA to login or skip
+                if (!APP.isLoggedIn) {
+                    html += '<div class="mt-3 text-center small text-muted">'
+                        + '<p>Login to save your personalised tea recommendations so they are remembered.</p>'
+                        + '<a href="/pages/login.php" class="btn-store-outline me-2">Login to save</a>'
+                        + '<button id="skip-save" class="btn-store">Skip for now</button>'
+                        + '</div>';
+                }
+
+                html += '</div>';
+                quizResults.innerHTML = html;
+                surveyScrollIntoView(quizResults);
+
+                // Attach save handlers for logged-in users
+                if (APP.isLoggedIn) {
+                    document.querySelectorAll('.save-reco').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            var productTitle = btn.getAttribute('data-product');
+                            // For demo we don't have product IDs on front-end; send the title as product identifier
+                            saveRecommendation({ product_title: productTitle, answers: JSON.stringify(answers) }, function(resp) {
+                                if (resp && resp.success) {
+                                    showNotification('Recommendation saved.', 'success');
+                                } else {
+                                    showNotification((resp && resp.message) || 'Could not save.', 'error');
+                                }
+                            });
+                        });
+                    });
+                } else {
+                    var skipBtn = document.getElementById('skip-save');
+                    if (skipBtn) skipBtn.addEventListener('click', function() { showNotification('You can save later after logging in.', 'success'); });
+                }
+            }
+        });
+    }
+
+    function surveyScrollIntoView(el) {
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Save recommendation (AJAX) — demo: sends title and answers; server may map title -> product id
+    function saveRecommendation(payload, cb) {
+        var url = window.location.origin + '/pages/save_recommendation.php';
+        var form = new FormData();
+        // map demo payload into fields server expects: product_id is not available here, so frontend sends product_title
+        form.append('product_title', payload.product_title || payload.product_title || '');
+        form.append('answers', payload.answers || '');
+        form.append('csrf_token', APP.csrfToken || '');
+
+        fetch(url, { method: 'POST', body: form, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r){ return r.json(); })
+            .then(function(data){ cb(data); })
+            .catch(function(){ cb(null); });
+    }
+
 });

@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = loginUser($email, $password);
 
             if ($result === true) {
-                $name = trim((string) ($_SESSION['first_name'] ?? '') . ' ' . (string) ($_SESSION['last_name'] ?? ''));
-                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . trim($name) . '!'];
+                $name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . e($name) . '!'];
                 redirect(SITE_URL . '/index.php');
             } else {
                 $errors[] = $result;
