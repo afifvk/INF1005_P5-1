@@ -12,11 +12,16 @@ define('MAIL_FROM_NAME', 'Tea Support');
 define('MAIL_FROM_ADDRESS', 'Uniw2500518@gmail.com');
 define('VERIFICATION_EXPIRY_MINUTES', 30);
 define('VERIFICATION_RESEND_COOLDOWN_SECONDS', 60);
+define('PASSWORD_RESET_EXPIRY_MINUTES', 30);
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
 define('SMTP_USERNAME', 'Uniw2500518@gmail.com');
 define('SMTP_PASSWORD', 'lcyzcxanmmycbpca');
 define('SMTP_ENCRYPTION', 'tls');
+
+// Google reCAPTCHA v2
+define('RECAPTCHA_SITE_KEY', '6Le6SIIsAAAAAKSab4IdtBdfnBNS4_LlpY3MdirQ');
+define('RECAPTCHA_SECRET_KEY', '6Le6SIIsAAAAAIn7BBHUTow9T8-sWKFP_oxnprKQ');
 
 // Session hardening
 ini_set('session.cookie_httponly', 1);

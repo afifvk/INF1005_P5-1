@@ -10,6 +10,13 @@ ALTER TABLE users
     ADD INDEX idx_verification_token_hash (verification_token_hash);
 
 -- Mark existing accounts as verified if you do not want to force old users through the new flow.
+    ADD COLUMN password_reset_token_hash CHAR(64) NULL AFTER verified_at,
+    ADD COLUMN password_reset_expires_at DATETIME NULL AFTER password_reset_token_hash,
+    ADD COLUMN password_reset_requested_at DATETIME NULL AFTER password_reset_expires_at,
+    ADD COLUMN password_reset_at DATETIME NULL AFTER password_reset_requested_at,
+    ADD INDEX idx_verification_token_hash (verification_token_hash),
+    ADD INDEX idx_password_reset_token_hash (password_reset_token_hash);
+
 UPDATE users
 SET is_verified = 1,
     verified_at = COALESCE(verified_at, NOW())

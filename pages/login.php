@@ -2,8 +2,8 @@
 $pageTitle = 'Login';
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
+require_once __DIR__ . '/../includes/header.php';
 
 if (isLoggedIn()) {
     redirect(SITE_URL . '/index.php');
@@ -22,12 +22,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($email) || empty($password)) {
             $errors[] = 'Please enter your email and password.';
+        } elseif (hasRecaptchaConfig()) {
+            $recaptchaResult = verifyRecaptchaToken($_POST['g-recaptcha-response'] ?? '', $_SERVER['REMOTE_ADDR'] ?? '');
+            if (!$recaptchaResult['success']) {
+                $errors[] = $recaptchaResult['message'];
+            } else {
+                $result = loginUser($email, $password);
+
+                if ($result === true) {
+                    $name = trim((string) ($_SESSION['first_name'] ?? '') . ' ' . (string) ($_SESSION['last_name'] ?? ''));
+                    $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . trim($name) . '!'];
+                    redirect(SITE_URL . '/index.php');
+                } else {
+                    $errors[] = $result;
+                }
+            }
         } else {
             $result = loginUser($email, $password);
 
             if ($result === true) {
-                $name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
-                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . e($name) . '!'];
+                $name = trim((string) ($_SESSION['first_name'] ?? '') . ' ' . (string) ($_SESSION['last_name'] ?? ''));
+                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Welcome back, ' . trim($name) . '!'];
                 redirect(SITE_URL . '/index.php');
             } else {
                 $errors[] = $result;
@@ -91,10 +106,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="invalid-feedback" id="pw-hint">Please enter your password.</div>
                         </div>
 
+                        <?php if (hasRecaptchaConfig()): ?>
+                        <div class="mb-3 text-center">
+                            <div class="d-inline-block">
+                                <div class="g-recaptcha" data-sitekey="<?= e(RECAPTCHA_SITE_KEY) ?>"></div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
                         <button type="submit" class="btn-store w-100 py-3 rounded">
                             Sign In <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
                         </button>
                     </form>
+
+                    <div class="text-center small mb-4">
+                        <a href="<?= SITE_URL ?>/pages/forgot_password.php">Forgot your password?</a>
+                    </div>
 
                     <hr class="divider-line">
 
@@ -107,5 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </section>
+
+<?php if (hasRecaptchaConfig()): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

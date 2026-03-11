@@ -1,121 +1,211 @@
 <?php
-require_once __DIR__ . '/../includes/header.php';
+$pageTitle = 'Register';
+require_once dirname(__DIR__) . '/config/app.php';
+require_once dirname(__DIR__) . '/config/database.php';
+require_once dirname(__DIR__) . '/includes/auth_helpers.php';
+require_once dirname(__DIR__) . '/includes/cart_helpers.php';
 
-$email = normalizeEmail($_GET['email'] ?? $_POST['email'] ?? '');
-if ($email === '') {
-    header('Location: ' . SITE_URL . '/pages/register.php');
-    exit;
+if (isLoggedIn()) {
+    redirect(SITE_URL . '/pages/login.php');
 }
 
-$successMessage = '';
-$errorMessage = '';
-$cooldownSeconds = (int) VERIFICATION_RESEND_COOLDOWN_SECONDS;
+$errors   = [];
+$formData = [
+    'first_name' => '',
+    'last_name'  => '',
+    'address'    => '',
+    'email'      => '',
+];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resend_verification'])) {
-    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
-        $errorMessage = 'Invalid request. Please try again.';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+    if (!verifyCsrfToken($token)) {
+        $errors[] = 'Invalid form token. Please refresh and try again.';
     } else {
-        $result = resendVerificationEmail($email);
+        $firstName = trim(isset($_POST['first_name']) ? $_POST['first_name'] : '');
+        $lastName  = trim(isset($_POST['last_name']) ? $_POST['last_name'] : '');
+        $address   = trim(isset($_POST['address']) ? $_POST['address'] : '');
+        $email     = normalizeEmail(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
+        $password  = isset($_POST['password']) ? $_POST['password'] : '';
+        $confirm   = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
 
-        if (in_array($result['status'], ['sent', 'generic_success'], true)) {
-            $successMessage = $result['message'];
-            $cooldownSeconds = (int) VERIFICATION_RESEND_COOLDOWN_SECONDS;
-        } elseif ($result['status'] === 'cooldown') {
-            $errorMessage = $result['message'];
+        $formData = [
+            'first_name' => $firstName,
+            'last_name'  => $lastName,
+            'address'    => $address,
+            'email'      => $email,
+        ];
 
-            if (preg_match('/(\d+)/', $result['message'], $matches)) {
-                $cooldownSeconds = max(0, (int) $matches[1]);
+        $errors = validateRegistration($firstName, $lastName, $email, $password, $confirm);
+
+        if (empty($errors) && hasRecaptchaConfig()) {
+            $recaptchaResult = verifyRecaptchaToken($_POST['g-recaptcha-response'] ?? '', $_SERVER['REMOTE_ADDR'] ?? '');
+            if (!$recaptchaResult['success']) {
+                $errors[] = $recaptchaResult['message'];
             }
-        } elseif ($result['status'] === 'already_verified') {
-            header('Location: ' . SITE_URL . '/pages/verify_email.php?verified=1');
-            exit;
-        } else {
-            $errorMessage = $result['message'] ?? 'Unable to resend verification email right now.';
+        }
+
+        if (empty($errors)) {
+            $result = registerUser($firstName, $lastName, $address, $email, $password);
+
+            if (($result['status'] ?? '') === 'pending') {
+                $_SESSION['pending_verification_email'] = $result['email'] ?? $email;
+                redirect(SITE_URL . '/pages/verify_pending.php?email=' . urlencode($result['email'] ?? $email));
+            } else {
+                $errors[] = $result['message'] ?? 'Unable to create account.';
+            }
         }
     }
 }
+
+require_once dirname(__DIR__) . '/includes/header.php';
 ?>
 
-<section class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-10 col-lg-8 col-xl-7">
-            <?php if ($successMessage): ?>
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <?= e($successMessage) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
+<section class="section-pad" aria-labelledby="register-heading">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-md-8 col-lg-6">
 
-            <?php if ($errorMessage): ?>
-                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                    <?= e($errorMessage) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
+                <div class="form-wrapper">
+                    <h1 id="register-heading" class="h3 mb-1 text-center">Create Your Account</h1>
+                    <p class="text-muted text-center small mb-4">Join us today — it's free!</p>
 
-            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center">
-                <h1 class="display-6 mb-3">Verify Your Email</h1>
-                <p class="lead mb-4">
-                    We sent a verification link to
-                    <strong><?= e($email) ?></strong>.
-                    Please check your inbox before logging in.
-                </p>
+                    <?php if (!empty($errors)): ?>
+                    <div class="alert alert-danger" role="alert" aria-live="assertive">
+                        <ul class="mb-0 ps-3">
+                            <?php foreach ($errors as $err): ?>
+                                <li><?= e($err) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
 
-                <div id="resendCountdownBox" class="alert alert-info text-center py-4 mb-4">
-                    You can resend the verification email in
-                    <strong><span id="resendCountdownText"><?= (int) $cooldownSeconds ?></span> seconds</strong>.
-                </div>
+                    <form id="register-form"
+                          method="POST"
+                          action="register.php"
+                          novalidate
+                          aria-label="Registration form">
 
-                <div id="resendButtonWrap" style="display: none;">
-                    <form method="post" class="mb-3">
-                        <input type="hidden" name="csrf_token" value="<?= e(generateCSRFToken()) ?>">
-                        <input type="hidden" name="email" value="<?= e($email) ?>">
-                        <button id="resendButton" type="submit" name="resend_verification" class="btn-store py-3 rounded w-100">
-                            RESEND VERIFICATION EMAIL
+                        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label for="first_name" class="form-label">
+                                    First Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       id="first_name"
+                                       name="first_name"
+                                       class="form-control"
+                                       placeholder="John"
+                                       value="<?= e($formData['first_name']) ?>"
+                                       required>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label for="last_name" class="form-label">
+                                    Last Name <span class="text-danger" aria-hidden="true">*</span>
+                                </label>
+                                <input type="text"
+                                       id="last_name"
+                                       name="last_name"
+                                       class="form-control"
+                                       value="<?= e($formData['last_name']) ?>"
+                                       maxlength="80"
+                                       autocomplete="family-name"
+                                       required
+                                       aria-required="true"
+                                       placeholder="Smith">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                Email Address <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control"
+                                   value="<?= e($formData['email']) ?>"
+                                   autocomplete="email"
+                                   required
+                                   aria-required="true"
+                                   aria-describedby="email-feedback"
+                                   placeholder="you@example.com">
+                            <div class="invalid-feedback" id="email-feedback"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Delivery Address</label>
+                            <textarea id="address"
+                                      name="address"
+                                      class="form-control"
+                                      rows="3"
+                                      autocomplete="street-address"
+                                      placeholder="Optional — 123 Main Street, City, Postcode"><?= e($formData['address']) ?></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                Password <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <div class="form-text mb-2">
+                                Must contain at least 10 characters, one uppercase letter, one lowercase letter, one number, and one special character.
+                            </div>
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   minlength="10"
+                                   required
+                                   aria-required="true"
+                                   autocomplete="new-password"
+                                   aria-describedby="password-help"
+                                   placeholder="Password">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label">
+                                Confirm Password <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <input type="password"
+                                   id="confirm_password"
+                                   name="confirm_password"
+                                   class="form-control"
+                                   required
+                                   aria-required="true"
+                                   autocomplete="new-password"
+                                   placeholder="Confirm Password">
+                        </div>
+
+                        <?php if (hasRecaptchaConfig()): ?>
+                        <div class="mb-3 text-center">
+                            <div class="d-inline-block">
+                                <div class="g-recaptcha" data-sitekey="<?= e(RECAPTCHA_SITE_KEY) ?>"></div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <button type="submit" class="btn-store w-100 py-3 rounded">
+                            Create Account <i class="bi bi-person-plus ms-1" aria-hidden="true"></i>
                         </button>
                     </form>
-                </div>
 
-                <a class="btn btn-outline-secondary py-3 rounded w-100" href="<?= SITE_URL ?>/pages/login.php">
-                    Back to Login
-                </a>
+                    <hr class="divider-line">
+
+                    <p class="text-center text-muted small mb-0">
+                        Already have an account?
+                        <a href="login.php">Log in here</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const countdownBox = document.getElementById('resendCountdownBox');
-    const countdownText = document.getElementById('resendCountdownText');
-    const resendButtonWrap = document.getElementById('resendButtonWrap');
+<?php if (hasRecaptchaConfig()): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
-    let remaining = <?= (int) $cooldownSeconds ?>;
-
-    function renderCountdown() {
-        if (remaining > 0) {
-            countdownBox.style.display = 'block';
-            resendButtonWrap.style.display = 'none';
-            countdownText.textContent = remaining;
-        } else {
-            countdownBox.style.display = 'none';
-            resendButtonWrap.style.display = 'block';
-        }
-    }
-
-    renderCountdown();
-
-    const timer = setInterval(function () {
-        if (remaining > 0) {
-            remaining--;
-            renderCountdown();
-        }
-
-        if (remaining <= 0) {
-            clearInterval(timer);
-        }
-    }, 1000);
-});
-</script>
-
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once dirname(__DIR__) . '/includes/footer.php'; ?>

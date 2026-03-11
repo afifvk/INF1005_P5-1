@@ -128,7 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // ── Register Form Validation ──────────────────────────────
     var registerForm = document.getElementById('register-form');
     if (registerForm) {
-        var usernameEl = document.getElementById('username');
         var emailEl    = document.getElementById('email');
         var passwordEl = document.getElementById('password');
         var confirmEl  = document.getElementById('confirm_password');
@@ -146,10 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        if (usernameEl) usernameEl.addEventListener('input', function() {
-            var v = usernameEl.value.trim();
-            setValidity(usernameEl, (v.length < 3 || v.length > 50) ? 'Username must be 3–50 characters.' : null);
-        });
+        
 
         if (emailEl) emailEl.addEventListener('input', function() {
             setValidity(emailEl, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim()) ? null : 'Enter a valid email.');
@@ -158,21 +154,32 @@ document.addEventListener('DOMContentLoaded', function() {
         if (passwordEl) passwordEl.addEventListener('input', function() {
             var v = passwordEl.value;
             var msg = null;
-            if (v.length < 8)          msg = 'At least 8 characters required.';
-            else if (!/[A-Z]/.test(v)) msg = 'Include at least one uppercase letter.';
-            else if (!/[0-9]/.test(v)) msg = 'Include at least one number.';
+            if (v.length < 10)         msg = 'At least 10 characters required.';
+            else if (!/[A-Z]/.test(v))            msg = 'Include at least one uppercase letter.';
+            else if (!/[a-z]/.test(v))            msg = 'Include at least one lowercase letter.';
+            else if (!/[0-9]/.test(v))            msg = 'Include at least one number.';
+            else if (!/[^A-Za-z0-9]/.test(v))    msg = 'Include at least one special character.';
             setValidity(passwordEl, msg);
             if (confirmEl && confirmEl.value) {
-                setValidity(confirmEl, confirmEl.value === v ? null : 'Passwords do not match.');
+                if (msg) {
+                    confirmEl.classList.remove('is-valid', 'is-invalid');
+                } else {
+                    setValidity(confirmEl, confirmEl.value === v ? null : 'Passwords do not match.');
+                }
             }
         });
 
         if (confirmEl) confirmEl.addEventListener('input', function() {
-            setValidity(confirmEl, confirmEl.value === (passwordEl ? passwordEl.value : '') ? null : 'Passwords do not match.');
+            var passwordValid = passwordEl && !passwordEl.classList.contains('is-invalid') && passwordEl.value;
+            if (!passwordValid) {
+                confirmEl.classList.remove('is-valid', 'is-invalid');
+            } else {
+                setValidity(confirmEl, confirmEl.value === passwordEl.value ? null : 'Passwords do not match.');
+            }
         });
 
         registerForm.addEventListener('submit', function(e) {
-            [usernameEl, emailEl, passwordEl, confirmEl].forEach(function(el) {
+            [emailEl, passwordEl, confirmEl].forEach(function(el) {
                 if (el) el.dispatchEvent(new Event('input'));
             });
             if (registerForm.querySelectorAll('.is-invalid').length > 0) {

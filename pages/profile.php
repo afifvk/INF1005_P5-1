@@ -121,7 +121,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     </h2>
 
                     <form method="POST" action="profile.php" aria-label="Edit profile form">
-
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                         <input type="hidden" name="action" value="update">
 
@@ -180,10 +179,10 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         <div class="row g-3 mb-4">
                             <div class="col-sm-6">
                                 <label for="new_password" class="form-label">New Password</label>
-                                <input type="password" id="new_password" name="new_password"
+                                <input type="new_password" id="new_password" name="new_password"
                                        class="form-control" autocomplete="new-password"
                                        aria-describedby="pw-note">
-                                <div class="form-text" id="pw-note">Min 8 chars, 1 uppercase, 1 number.</div>
+                                <div class="form-text" id="pw-note">Min 10 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character.</div>
                             </div>
                             <div class="col-sm-6">
                                 <label for="confirm_password" class="form-label">Confirm New Password</label>

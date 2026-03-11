@@ -25,6 +25,14 @@ CREATE TABLE IF NOT EXISTS users (
     created_at                 DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_email (email),
     INDEX idx_verification_token_hash (verification_token_hash)
+    password_reset_token_hash  CHAR(64)     NULL,
+    password_reset_expires_at  DATETIME     NULL,
+    password_reset_requested_at DATETIME    NULL,
+    password_reset_at          DATETIME     NULL,
+    created_at                 DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_verification_token_hash (verification_token_hash),
+    INDEX idx_password_reset_token_hash (password_reset_token_hash)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS products (
@@ -84,3 +92,5 @@ CREATE TABLE IF NOT EXISTS recommendations (
     FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO users (first_name, last_name, email, password, role, is_verified, verified_at) VALUES
+('Admin', 'User', 'admin@store.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, NOW());

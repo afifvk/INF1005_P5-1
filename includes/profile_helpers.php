@@ -82,10 +82,12 @@ function validateProfileUpdate($firstName, $lastName, $email, $newPassword, $con
     }
 
     if (!empty($newPassword)) {
-        if (strlen($newPassword) < 8)             $errors[] = 'New password must be at least 8 characters.';
-        if (!preg_match('/[A-Z]/', $newPassword)) $errors[] = 'New password needs at least one uppercase letter.';
-        if (!preg_match('/[0-9]/', $newPassword)) $errors[] = 'New password needs at least one number.';
-        if ($newPassword !== $confirmPassword)    $errors[] = 'New passwords do not match.';
+        if (strlen($newPassword) < 10)                      $errors[] = 'New password must be at least 10 characters.';
+        if (!preg_match('/[A-Z]/', $newPassword))           $errors[] = 'New password needs at least one uppercase letter.';
+        if (!preg_match('/[a-z]/', $newPassword))           $errors[] = 'New password needs at least one lowercase letter.';
+        if (!preg_match('/[0-9]/', $newPassword))           $errors[] = 'New password needs at least one number.';
+        if (!preg_match('/[^A-Za-z0-9]/', $newPassword))   $errors[] = 'New password needs at least one special character.';
+        if ($newPassword !== $confirmPassword)              $errors[] = 'New passwords do not match.';
     }
 
     return $errors;

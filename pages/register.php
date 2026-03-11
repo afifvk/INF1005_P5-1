@@ -38,11 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $errors = validateRegistration($firstName, $lastName, $email, $password, $confirm);
 
+        if (empty($errors) && hasRecaptchaConfig()) {
+            $recaptchaResult = verifyRecaptchaToken($_POST['g-recaptcha-response'] ?? '', $_SERVER['REMOTE_ADDR'] ?? '');
+            if (!$recaptchaResult['success']) {
+                $errors[] = $recaptchaResult['message'];
+            }
+        }
+
         if (empty($errors)) {
             $result = registerUser($firstName, $lastName, $address, $email, $password);
 
             if (($result['status'] ?? '') === 'pending') {
-                $_SESSION['flash'] = ['type' => 'success', 'message' => $result['message']];
                 $_SESSION['pending_verification_email'] = $result['email'] ?? $email;
                 redirect(SITE_URL . '/pages/verify_pending.php?email=' . urlencode($result['email'] ?? $email));
             } else {
@@ -145,13 +151,13 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                 Password <span class="text-danger" aria-hidden="true">*</span>
                             </label>
                             <div class="form-text mb-2">
-                                Must contain at least 8 characters, one uppercase letter, and one number.
+                                Must contain at least 10 characters, one uppercase letter, one lowercase letter, one number, and one special character.
                             </div>
                             <input type="password"
                                    id="password"
                                    name="password"
                                    class="form-control"
-                                   minlength="8"
+                                   minlength="10"
                                    required
                                    aria-required="true"
                                    autocomplete="new-password"
@@ -173,6 +179,14 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                    placeholder="Confirm Password">
                         </div>
 
+                        <?php if (hasRecaptchaConfig()): ?>
+                        <div class="mb-3 text-center">
+                            <div class="d-inline-block">
+                                <div class="g-recaptcha" data-sitekey="<?= e(RECAPTCHA_SITE_KEY) ?>"></div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
                         <button type="submit" class="btn-store w-100 py-3 rounded">
                             Create Account <i class="bi bi-person-plus ms-1" aria-hidden="true"></i>
                         </button>
@@ -189,5 +203,9 @@ require_once dirname(__DIR__) . '/includes/header.php';
         </div>
     </div>
 </section>
+
+<?php if (hasRecaptchaConfig()): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <?php require_once dirname(__DIR__) . '/includes/footer.php'; ?>
