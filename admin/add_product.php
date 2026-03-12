@@ -1,33 +1,48 @@
 <?php
-    session_start();
+session_start();
 
-    require_once __DIR__.'/../config/database.php';
-    require_once __DIR__.'/../includes/auth_helpers.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/auth_helpers.php';
 
-    if (!isAdmin()) {
-        die("Access denied");
-    }
+if (!isAdmin()) {
+    die('Access denied');
+}
 
-    $pdo = getDB();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: inventory.php');
+    exit;
+}
 
-    $name = $_POST['name'];
-    $description = $_POST['description'];
-    $price = $_POST['price'];
-    $stock = $_POST['stock'];
+$pdo = getDB();
 
-    $imageName = basename($_FILES['image']['name']);
+$name = trim((string)($_POST['name'] ?? ''));
+$description = trim((string)($_POST['description'] ?? ''));
+$price = isset($_POST['price']) ? (float)$_POST['price'] : -1;
+$stock = isset($_POST['stock']) ? (int)$_POST['stock'] : -1;
+$returnTo = trim((string)($_POST['return_to'] ?? ''));
+$redirectUrl = 'inventory.php' . ($returnTo !== '' ? '?' . $returnTo : '');
 
-    move_uploaded_file(
-        $_FILES['image']['tmp_name'],
-        "../uploads/".$imageName
-    );
+if ($name === '' || $description === '' || $price < 0 || $stock < 0) {
+    die('Invalid product data.');
+}
 
-    $stmt = $pdo->prepare("
-        INSERT INTO products (name, description, price, stock, image)
-        VALUES (?, ?, ?, ?, ?)
-    ");
+if (!isset($_FILES['image']) || ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+    die('Please upload a product image.');
+}
 
-    $stmt->execute([$name,$description,$price,$stock,$imageName]);
+$imageName = basename((string)$_FILES['image']['name']);
+$uploadPath = __DIR__ . '/../uploads/' . $imageName;
 
-    header("Location: inventory.php");
+if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
+    die('Failed to upload image.');
+}
+
+$stmt = $pdo->prepare('
+    INSERT INTO products (name, description, price, stock, image)
+    VALUES (?, ?, ?, ?, ?)
+');
+
+$stmt->execute([$name, $description, $price, $stock, $imageName]);
+
+header('Location: ' . $redirectUrl);
 exit;

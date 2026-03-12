@@ -1,19 +1,26 @@
 <?php
-    session_start();
+session_start();
 
-    require_once __DIR__.'/../config/database.php';
-    require_once __DIR__.'/../includes/auth_helpers.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/auth_helpers.php';
 
-    if (!isAdmin()) {
-        die("Access denied");
-    }
+if (!isAdmin()) {
+    die('Access denied');
+}
 
-    $pdo = getDB();
+$pdo = getDB();
 
-    $id = intval($_GET['id']);
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$returnTo = trim((string)($_GET['return_to'] ?? ''));
+$redirectUrl = 'inventory.php' . ($returnTo !== '' ? '?' . $returnTo : '');
 
-    $stmt = $pdo->prepare("DELETE FROM products WHERE id=?");
-    $stmt->execute([$id]);
+if ($id <= 0) {
+    header('Location: ' . $redirectUrl);
+    exit;
+}
 
-    header("Location: inventory.php");
+$stmt = $pdo->prepare('DELETE FROM products WHERE id = ?');
+$stmt->execute([$id]);
+
+header('Location: ' . $redirectUrl);
 exit;
