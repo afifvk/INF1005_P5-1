@@ -277,20 +277,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (score <= 5) {
                 personality = 'Bright & Floral';
                 suggestions = [
-                    { title: 'Jasmine Blossom', desc: 'A light, floral cup.' },
-                    { title: 'Citrus Earl', desc: 'Bright notes for daytime.' }
+                    { title: 'Jasmine Blossom', desc: 'A light, floral cup.', filterParam: 'flavours[]=Floral' },
+                    { title: 'Citrus Earl', desc: 'Bright notes for daytime.', filterParam: 'flavours[]=Floral' }
                 ];
             } else if (score <= 8) {
                 personality = 'Cozy Comfort';
                 suggestions = [
-                    { title: 'Vanilla Chai', desc: 'Warm and sweet.' },
-                    { title: 'Honey Rooibos', desc: 'Smooth, caffeine-free option.' }
+                    { title: 'Vanilla Chai', desc: 'Warm and sweet.', filterParam: 'flavours[]=Sweet' },
+                    { title: 'Honey Rooibos', desc: 'Smooth, caffeine-free option.', filterParam: 'flavours[]=Sweet' }
                 ];
             } else {
                 personality = 'Bold Explorer';
                 suggestions = [
-                    { title: 'Smoky Lapsang', desc: 'Deep and smoky flavors.' },
-                    { title: 'Earthy Pu-erh', desc: 'Rich and grounding.' }
+                    { title: 'Smoky Lapsang', desc: 'Deep and smoky flavors.', filterParam: 'flavours[]=Smoky' },
+                    { title: 'Earthy Pu-erh', desc: 'Rich and grounding.', filterParam: 'flavours[]=Earthy' }
                 ];
             }
 
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             + '</div>';
                     }
 
-                    html += '<a class="btn-store-outline mt-2 d-inline-block" href="/pages/products.php">View similar</a>'
+                    html += '<a class="btn-store-outline mt-2 d-inline-block" href="/pages/products.php?' + s.filterParam + '">View similar</a>'
                         + '</div></div>';
                 });
 
