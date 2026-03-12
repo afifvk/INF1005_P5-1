@@ -379,4 +379,94 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(function(){ cb(null); });
     }
 
+
+    // ── Gemini Chatbot ───────────────────────────────────────
+    if (APP.geminiChatEnabled) {
+        var chatbotToggle = document.getElementById('chatbot-toggle');
+        var chatbotPanel = document.getElementById('chatbot-panel');
+        var chatbotClose = document.getElementById('chatbot-close');
+        var chatbotForm = document.getElementById('chatbot-form');
+        var chatbotInput = document.getElementById('chatbot-input');
+        var chatbotMessages = document.getElementById('chatbot-messages');
+        var chatbotSend = document.getElementById('chatbot-send');
+        var chatHistory = [];
+
+        function appendChatMessage(text, role) {
+            if (!chatbotMessages) return;
+            var msg = document.createElement('div');
+            msg.className = 'chatbot-message ' + (role === 'user' ? 'chatbot-message-user' : 'chatbot-message-bot');
+            msg.textContent = text;
+            chatbotMessages.appendChild(msg);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function setChatOpen(open) {
+            if (!chatbotPanel || !chatbotToggle) return;
+            chatbotPanel.hidden = !open;
+            chatbotToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (open && chatbotInput) chatbotInput.focus();
+        }
+
+        if (chatbotToggle) {
+            chatbotToggle.addEventListener('click', function() {
+                setChatOpen(chatbotPanel.hidden);
+            });
+        }
+
+        if (chatbotClose) {
+            chatbotClose.addEventListener('click', function() {
+                setChatOpen(false);
+            });
+        }
+
+        if (chatbotForm) {
+            chatbotForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var message = chatbotInput ? chatbotInput.value.trim() : '';
+                if (!message) return;
+
+                appendChatMessage(message, 'user');
+                chatHistory.push({ role: 'user', text: message });
+                if (chatbotInput) chatbotInput.value = '';
+                if (chatbotSend) chatbotSend.disabled = true;
+
+                var typing = document.createElement('div');
+                typing.className = 'chatbot-message chatbot-message-bot chatbot-typing';
+                typing.textContent = 'Tea Assistant is typing...';
+                chatbotMessages.appendChild(typing);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+                fetch((APP.siteUrl || window.location.origin) + '/pages/gemini_chat.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': APP.csrfToken || ''
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: chatHistory
+                    })
+                })
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (typing.parentNode) typing.remove();
+                        if (data && data.success && data.reply) {
+                            appendChatMessage(data.reply, 'bot');
+                            chatHistory.push({ role: 'model', text: data.reply });
+                        } else {
+                            appendChatMessage((data && data.message) || 'Sorry, the chatbot is unavailable right now.', 'bot');
+                        }
+                    })
+                    .catch(function() {
+                        if (typing.parentNode) typing.remove();
+                        appendChatMessage('Sorry, the chatbot is unavailable right now.', 'bot');
+                    })
+                    .finally(function() {
+                        if (chatbotSend) chatbotSend.disabled = false;
+                    });
+            });
+        }
+    }
+
+
 });

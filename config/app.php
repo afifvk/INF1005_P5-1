@@ -23,6 +23,14 @@ define('SMTP_ENCRYPTION', 'tls');
 define('RECAPTCHA_SITE_KEY', '6Le6SIIsAAAAAKSab4IdtBdfnBNS4_LlpY3MdirQ');
 define('RECAPTCHA_SECRET_KEY', '6Le6SIIsAAAAAIn7BBHUTow9T8-sWKFP_oxnprKQ');
 
+
+// Gemini chatbot
+// Keep the website on HTTP if needed; the server will call the Gemini API over HTTPS.
+define('ENABLE_GEMINI_CHATBOT', true);
+define('GEMINI_API_KEY', 'AIzaSyCK-hZO3GTN2xC2QEwSn2XXkdQmSRH9E4w');
+define('GEMINI_MODEL', 'gemini-2.5-flash');
+define('GEMINI_CHATBOT_MAX_HISTORY_TURNS', 6);
+
 // Session hardening
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_samesite', 'Strict');
