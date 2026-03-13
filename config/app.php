@@ -2,6 +2,8 @@
 /**
  * Application Configuration
  */
+require_once __DIR__ . '/../includes/env_helpers.php';
+loadEnv(dirname(__DIR__) . '/.env');
 
 define('SITE_NAME', 'Tea');
 define('SITE_URL', 'http://35.212.189.249');
@@ -27,7 +29,8 @@ define('RECAPTCHA_SECRET_KEY', '6Le6SIIsAAAAAIn7BBHUTow9T8-sWKFP_oxnprKQ');
 // Gemini chatbot
 // Keep the website on HTTP if needed; the server will call the Gemini API over HTTPS.
 define('ENABLE_GEMINI_CHATBOT', true);
-define('GEMINI_API_KEY', 'AIzaSyCK-hZO3GTN2xC2QEwSn2XXkdQmSRH9E4w');
+//define('GEMINI_API_KEY', 'AIzaSyCK-hZO3GTN2xC2QEwSn2XXkdQmSRH9E4w');
+define('GEMINI_API_KEY', getenv('GEMINI_API_KEY'));
 define('GEMINI_MODEL', 'gemini-2.5-flash');
 define('GEMINI_CHATBOT_MAX_HISTORY_TURNS', 6);
 
