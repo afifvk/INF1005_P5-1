@@ -109,33 +109,103 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
                             <h3 id="quiz-heading">Create Your Personalitea</h3>
                             <div id="quiz-desc" class="visually-hidden">This form is a demo quiz that maps answers to suggested products.</div>
 
-                            <fieldset class="mb-3">
+                            <div class="quiz-questions">
+                            <fieldset class="mb-3 quiz-question">
                                 <legend class="form-label">1) How do you like your flavour profile?</legend>
-                                <label><input type="radio" name="q1" value="light" required> Light &amp; floral</label><br>
-                                <label><input type="radio" name="q1" value="earthy"> Earthy &amp; robust</label><br>
-                                <label><input type="radio" name="q1" value="sweet"> Sweet &amp; aromatic</label>
+                                <div class="quiz-options" role="radiogroup" aria-labelledby="q1-legend">
+                                    <label class="quiz-option" data-value="light">
+                                        <input type="radio" name="q1" value="light" required>
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Light & floral">
+                                        <div class="opt-label">Light &amp; floral</div>
+                                        <div class="opt-sub">Delicate, floral notes</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="earthy">
+                                        <input type="radio" name="q1" value="earthy">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Earthy & robust">
+                                        <div class="opt-label">Earthy &amp; robust</div>
+                                        <div class="opt-sub">Deep, grounded flavours</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="sweet">
+                                        <input type="radio" name="q1" value="sweet">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Sweet & aromatic">
+                                        <div class="opt-label">Sweet &amp; aromatic</div>
+                                        <div class="opt-sub">Warm, fragrant notes</div>
+                                    </label>
+                                </div>
                             </fieldset>
 
-                            <fieldset class="mb-3">
+                            <fieldset class="mb-3 quiz-question">
                                 <legend class="form-label">2) When do you usually enjoy tea?</legend>
-                                <label><input type="radio" name="q2" value="morning" required> Morning boost</label><br>
-                                <label><input type="radio" name="q2" value="afternoon"> Afternoon calm</label><br>
-                                <label><input type="radio" name="q2" value="evening"> Evening relaxation</label>
+                                <div class="quiz-options">
+                                    <label class="quiz-option" data-value="morning">
+                                        <input type="radio" name="q2" value="morning" required>
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Morning boost">
+                                        <div class="opt-label">Morning boost</div>
+                                        <div class="opt-sub">Energising and bright</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="afternoon">
+                                        <input type="radio" name="q2" value="afternoon">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Afternoon calm">
+                                        <div class="opt-label">Afternoon calm</div>
+                                        <div class="opt-sub">Light and soothing</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="evening">
+                                        <input type="radio" name="q2" value="evening">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Evening relaxation">
+                                        <div class="opt-label">Evening relaxation</div>
+                                        <div class="opt-sub">Calming, low caffeine</div>
+                                    </label>
+                                </div>
                             </fieldset>
 
-                            <fieldset class="mb-3">
+                            <fieldset class="mb-3 quiz-question">
                                 <legend class="form-label">3) Choose a mood:</legend>
-                                <label><input type="radio" name="q3" value="adventurous" required> Adventurous</label><br>
-                                <label><input type="radio" name="q3" value="cozy"> Cozy</label><br>
-                                <label><input type="radio" name="q3" value="focused"> Focused</label>
+                                <div class="quiz-options">
+                                    <label class="quiz-option" data-value="adventurous">
+                                        <input type="radio" name="q3" value="adventurous" required>
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Adventurous">
+                                        <div class="opt-label">Adventurous</div>
+                                        <div class="opt-sub">Try bold blends</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="cozy">
+                                        <input type="radio" name="q3" value="cozy">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Cozy">
+                                        <div class="opt-label">Cozy</div>
+                                        <div class="opt-sub">Comforting and warm</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="focused">
+                                        <input type="radio" name="q3" value="focused">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Focused">
+                                        <div class="opt-label">Focused</div>
+                                        <div class="opt-sub">Crisp and clear</div>
+                                    </label>
+                                </div>
                             </fieldset>
 
-                            <fieldset class="mb-3">
+                            <fieldset class="mb-3 quiz-question">
                                 <legend class="form-label">4) Pick a favourite note:</legend>
-                                <label><input type="radio" name="q4" value="citrus" required> Citrus</label><br>
-                                <label><input type="radio" name="q4" value="vanilla"> Vanilla</label><br>
-                                <label><input type="radio" name="q4" value="smoky"> Smoky</label>
+                                <div class="quiz-options">
+                                    <label class="quiz-option" data-value="citrus">
+                                        <input type="radio" name="q4" value="citrus" required>
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Citrus">
+                                        <div class="opt-label">Citrus</div>
+                                        <div class="opt-sub">Zesty, uplifting</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="vanilla">
+                                        <input type="radio" name="q4" value="vanilla">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Vanilla">
+                                        <div class="opt-label">Vanilla</div>
+                                        <div class="opt-sub">Creamy, smooth</div>
+                                    </label>
+                                    <label class="quiz-option" data-value="smoky">
+                                        <input type="radio" name="q4" value="smoky">
+                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Smoky">
+                                        <div class="opt-label">Smoky</div>
+                                        <div class="opt-sub">Rich, toasted notes</div>
+                                    </label>
+                                </div>
                             </fieldset>
+                            </div>
 
                             <div class="d-flex gap-3">
                                 <button type="submit" class="btn-store">See my result</button>
@@ -152,6 +222,42 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
         </div>
     </div>
 </section>
+<script>
+// Quiz card interaction: keep radios in sync and visual state
+(function(){
+    function initQuizCards(root){
+        const groups = root.querySelectorAll('.quiz-options');
+        groups.forEach(group=>{
+            const options = Array.from(group.querySelectorAll('.quiz-option'));
+            options.forEach(opt=>{
+                const input = opt.querySelector('input[type="radio"]');
+                if(!input) return;
+                // click on card toggles radio
+                opt.addEventListener('click', (e)=>{
+                    if(!input.checked){
+                        input.checked = true;
+                        input.dispatchEvent(new Event('change', {bubbles:true}));
+                    }
+                });
+
+                // update visual selected state when input changes
+                input.addEventListener('change', ()=>{
+                    options.forEach(o=> o.classList.remove('selected'));
+                    if(input.checked) opt.classList.add('selected');
+                });
+            });
+            // initialise state from checked radios (for back/restore)
+            const checked = group.querySelector('input[type="radio"]:checked');
+            if(checked){
+                const parent = checked.closest('.quiz-option');
+                if(parent) parent.classList.add('selected');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=> initQuizCards(document));
+})();
+</script>
 <section class="section-pad" aria-labelledby="products-heading">
     <div class="container">
         <div class="section-header">
