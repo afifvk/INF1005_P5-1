@@ -16,15 +16,36 @@ if (!isLoggedIn()) {
     redirect(SITE_URL . '/pages/login.php');
 }
 
-
-
 $userId = (int)$_SESSION['user_id'];
 $items  = getCartItems($userId);
 $total  = getCartTotal($userId);
+$user   = getUserById($userId);
 ?>
 
 <section class="section-pad" aria-labelledby="cart-heading">
+    
     <div class="container">
+        <!-- Shipping Address Banner -->
+        <div class="mb-4 p-3 rounded border" aria-label="Shipping address">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">
+                <i class="bi bi-truck me-1" aria-hidden="true"></i> Shipping Address
+            </p>
+            <?php if (!empty($user['address'])): ?>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <p class="mb-0"><?= nl2br(e($user['address'])) ?></p>
+                    <a href="profile.php" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Edit
+                    </a>
+                </div>
+            <?php else: ?>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <p class="mb-0 text-muted">No shipping address on file.</p>
+                    <a href="profile.php" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Add Address
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
 
         <!-- Breadcrumb -->
         <nav aria-label="Breadcrumb" class="mb-4">
@@ -175,13 +196,28 @@ $total  = getCartTotal($userId);
                     </p>
                     <?php endif; ?>
 
-                    <!-- Checkout button (placeholder — extend with payment gateway) -->
-                    <button type="button"
-                            class="btn-gold w-100 py-3 rounded"
-                            onclick="alert('Checkout would proceed to payment in a full implementation.')">
-                        <i class="bi bi-lock me-1" aria-hidden="true"></i>
-                        Proceed to Checkout
-                    </button>
+                    <!-- Checkout form -->
+                    <?php if (empty($user['address'])): ?>
+                        <p class="small text-danger mb-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            Please <a href="profile.php">add a shipping address</a> before checking out.
+                        </p>
+                        <button class="btn-gold w-100 py-3 rounded" disabled>
+                            <i class="bi bi-lock me-1" aria-hidden="true"></i>
+                            Proceed to Checkout
+                        </button>
+                    <?php else: ?>
+                        <form method="POST" action="cart_action.php">
+                            <input type="hidden" name="action" value="checkout">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                            <button type="submit"
+                                    class="btn-gold w-100 py-3 rounded"
+                                    onclick="return confirm('Confirm your order?')">
+                                <i class="bi bi-lock me-1" aria-hidden="true"></i>
+                                Proceed to Checkout
+                            </button>
+                        </form>
+                    <?php endif; ?>
 
                     <div class="text-center mt-3">
                         <a href="products.php" class="small text-muted">

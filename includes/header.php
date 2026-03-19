@@ -39,10 +39,17 @@ if (isLoggedIn()) {
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=3">
 </head>
-<body>
+<body>  
+
+    <!-- ADMIN RIBBON -->
+    <?php if (isAdmin()): ?>
+    <div class="admin-ribbon">
+        <i class="bi bi-shield-lock"></i> ADMIN MODE
+    </div>
+    <?php endif; ?>
 
 <nav class="navbar navbar-expand-lg sticky-top" role="navigation" aria-label="Main navigation">
-    <div class="container">
+    <div class="container ">
 
         <!-- Brand -->
         <a class="navbar-brand fw-bold" href="<?= SITE_URL ?>/index.php">
@@ -118,14 +125,30 @@ if (isLoggedIn()) {
                                     <i class="bi bi-cart3 me-2" aria-hidden="true"></i>My Cart
                                 </a>
                             </li>
-                            <?php if (isAdmin()): ?>
-                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item" href="<?= SITE_URL ?>/admin/index.php">
-                                    <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>Admin Panel
+                                <a class="dropdown-item" href="<?= SITE_URL ?>/pages/orders.php">
+                                    <i class="bi bi-bag-check me-2" aria-hidden="true"></i>My Orders
                                 </a>
                             </li>
-                            <?php endif; ?>
+                        <?php if (isAdmin()): ?>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li>
+                            <a class="dropdown-item" href="<?= SITE_URL ?>/admin/index.php">
+                                <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>
+                                Admin Dashboard
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="<?= SITE_URL ?>/admin/inventory.php">
+                                <i class="bi bi-box-seam me-2" aria-hidden="true"></i>
+                                Manage Inventory
+                            </a>
+                        </li>
+
+                        <?php endif; ?>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="<?= SITE_URL ?>/pages/logout.php">

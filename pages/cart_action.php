@@ -1,12 +1,13 @@
 <?php
 /**
  * pages/cart_action.php
- * Handles all cart mutations: add, remove, update, clear.
+ * Handles all cart mutations: add, remove, update, clear, checkout.
  */
 
 require_once dirname(__DIR__) . '/config/app.php';
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/includes/cart_helpers.php';
+require_once dirname(__DIR__) . '/includes/profile_helpers.php';
 
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -27,8 +28,6 @@ if (!isLoggedIn()) {
     if ($isAjax) jsonResponse(false, 'You must be logged in to add items to your cart.');
     flashRedirect('danger', 'Please log in first.', SITE_URL . '/pages/login.php');
 }
-
-
 
 $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
 if (!verifyCsrfToken($token)) {
@@ -84,6 +83,26 @@ switch ($action) {
     case 'clear':
         clearCart($userId);
         flashRedirect('success', 'Cart cleared.', SITE_URL . '/pages/cart.php');
+        break;
+
+    case 'checkout':
+        // Fetch user profile for shipping details
+        $user = getUserById($userId);
+
+        if (empty($user['address'])) {
+            flashRedirect('danger', 'Please add a shipping address to your profile before checking out.', SITE_URL . '/pages/cart.php');
+        }
+
+        $shippingName    = trim($user['first_name'] . ' ' . $user['last_name']);
+        $shippingAddress = $user['address'];
+
+        $orderId = createOrder($userId, $shippingName, $shippingAddress);
+
+        if (!$orderId) {
+            flashRedirect('danger', 'Could not create your order. Please try again.', SITE_URL . '/pages/cart.php');
+        }
+
+        flashRedirect('success', 'Order placed successfully!', SITE_URL . '/pages/order_confirmation.php?order_id=' . $orderId);
         break;
 
     default:
