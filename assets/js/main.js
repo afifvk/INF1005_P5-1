@@ -220,11 +220,50 @@ document.addEventListener('DOMContentLoaded', function() {
     var quizCancel = document.getElementById('quiz-cancel');
     var APP = window.__APP__ || { isLoggedIn: false, csrfToken: '' };
 
+    // Helpers: animate show/hide using CSS classes defined in stylesheet
+    function animateHide(el, cb) {
+        if (!el) { if (cb) cb(); return; }
+        el.classList.add('fade-panel');
+        // ensure element is visible so transition can run
+        if (getComputedStyle(el).display === 'none') el.style.display = '';
+        // Force a reflow then add hidden class to start transition
+        void el.offsetWidth;
+        el.classList.add('fade-hidden');
+        var done = function() {
+            // after transition, collapse from layout
+            try { el.style.display = 'none'; } catch (e) {}
+            el.removeEventListener('transitionend', done);
+            if (cb) cb();
+        };
+        // fallback in case transitionend doesn't fire
+        var tid = setTimeout(function(){ done(); clearTimeout(tid); }, 520);
+        el.addEventListener('transitionend', done);
+    }
+
+    function animateShow(el, cb) {
+        if (!el) { if (cb) cb(); return; }
+        el.classList.add('fade-panel');
+        // start hidden so removing class animates in
+        el.classList.add('fade-hidden');
+        el.style.display = '';
+        // force reflow then remove hidden class to animate
+        void el.offsetWidth;
+        el.classList.remove('fade-hidden');
+        var done = function() {
+            el.removeEventListener('transitionend', done);
+            if (cb) cb();
+        };
+        var tid = setTimeout(function(){ done(); clearTimeout(tid); }, 520);
+        el.addEventListener('transitionend', done);
+    }
+
     function showQuiz() {
         // Show the actual quiz form (moved below the hero)
         if (quizForm) {
-            quizForm.style.display = '';
-            quizForm.setAttribute('aria-hidden', 'false');
+            // restore form and its parent panel (in case it was hidden after results)
+            var parentPanel = quizForm.closest('.quiz-panel');
+            if (parentPanel) animateShow(parentPanel);
+            animateShow(quizForm, function(){ quizForm.setAttribute('aria-hidden', 'false'); });
         }
         if (quizResults) quizResults.style.display = 'none';
         // focus first input for accessibility
@@ -335,6 +374,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += '</div>';
                 quizResults.innerHTML = html;
                 surveyScrollIntoView(quizResults);
+
+                // Hide the quiz form and its surrounding panel with animation so only results remain visible
+                try {
+                    if (quizForm) {
+                        var parentPanel = quizForm.closest('.quiz-panel');
+                        // animate-hide the parent panel (left) then expand results panel
+                        if (parentPanel) {
+                            animateHide(parentPanel, function(){
+                                // after hidden, expand results panel
+                                var resultsPanel = quizResults.closest('.quiz-panel');
+                                if (resultsPanel) {
+                                    resultsPanel.style.flex = '1 1 0';
+                                    resultsPanel.style.width = '100%';
+                                }
+                            });
+                        }
+                        // also animate-hide the form element itself
+                        animateHide(quizForm, function(){ quizForm.setAttribute('aria-hidden', 'true'); });
+                    }
+                } catch (e) { /* no-op */ }
 
                 // Attach save handlers for logged-in users
                 if (APP.isLoggedIn) {
