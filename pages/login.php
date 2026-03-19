@@ -88,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    value="<?= e($emailVal) ?>"
                                    autocomplete="email"
                                    required
-                                   aria-required="true"
                                    aria-describedby="email-hint">
                             <div class="invalid-feedback" id="email-hint">Please enter a valid email.</div>
                         </div>
@@ -101,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    class="form-control"
                                    autocomplete="current-password"
                                    required
-                                   aria-required="true"
                                    aria-describedby="pw-hint">
                             <div class="invalid-feedback" id="pw-hint">Please enter your password.</div>
                         </div>

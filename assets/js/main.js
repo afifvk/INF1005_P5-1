@@ -7,6 +7,22 @@ function updateCartBadge(count) {
     badge.style.display = count > 0 ? 'inline-block' : 'none';
 }
 
+function showCartToast(message, success) {
+    var toastEl = document.getElementById('cart-toast');
+    var msgEl   = document.getElementById('cart-toast-msg');
+    var iconEl  = document.getElementById('cart-toast-icon');
+    if (!toastEl || !msgEl || !iconEl) return;
+    msgEl.textContent = message;
+    if (success) {
+        toastEl.className = 'toast align-items-center border-0 text-bg-success';
+        iconEl.className  = 'bi bi-cart-check-fill';
+    } else {
+        toastEl.className = 'toast align-items-center border-0 text-bg-danger';
+        iconEl.className  = 'bi bi-exclamation-circle-fill';
+    }
+    bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 }).show();
+}
+
 function showNotification(message, type) {
     type = type || 'success';
     var existing = document.getElementById('toast-notification');
@@ -81,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.success) {
                     updateCartBadge(data.cart_count);
-                    showNotification(data.message || 'Added to cart!', 'success');
+                    showCartToast(data.message || 'Added to cart!', true);
                     btn.innerHTML = '<i class="bi bi-check" aria-hidden="true"></i> Added';
                     btn.style.background = '#27ae60';
                     setTimeout(function() {
@@ -90,14 +106,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn.disabled = false;
                     }, 2000);
                 } else {
-                    showNotification(data.message || 'Could not add item.', 'error');
+                    showCartToast(data.message || 'Could not add item.', false);
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
                 }
 
             } catch (err) {
                 console.error('Cart AJAX error:', err);
-                showNotification(err.message || 'Something went wrong.', 'error');
+                showCartToast(err.message || 'Something went wrong.', false);
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
             }

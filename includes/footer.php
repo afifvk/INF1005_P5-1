@@ -6,20 +6,20 @@
 <!-- ======================================================
      FOOTER
      ====================================================== -->
-<footer class="site-footer mt-auto py-4" role="contentinfo">
+<footer class="site-footer mt-auto py-4">
     <div class="container">
         <div class="row g-4">
 
             <div class="col-md-4">
-                <h5 class="footer-brand">
+                <h2 class="footer-brand">
                     <i class="bi bi-bag-heart-fill me-1" aria-hidden="true"></i>
                     <?= SITE_NAME ?>
-                </h5>
+                </h2>
                 <p class="text-muted small">Quality products crafted for modern living. Shop with confidence.</p>
             </div>
 
             <div class="col-md-4">
-                <h6 class="footer-heading">Quick Links</h6>
+                <h3 class="footer-heading">Quick Links</h3>
                 <ul class="list-unstyled footer-links">
                     <li><a href="<?= SITE_URL ?>/index.php">Home</a></li>
                     <li><a href="<?= SITE_URL ?>/pages/products.php">Products</a></li>
@@ -29,7 +29,7 @@
             </div>
 
             <div class="col-md-4">
-                <h6 class="footer-heading">Account</h6>
+                <h3 class="footer-heading">Account</h3>
                 <ul class="list-unstyled footer-links">
                     <?php if (isLoggedIn()): ?>
                         <li><a href="<?= SITE_URL ?>/pages/logout.php">Logout</a></li>

@@ -144,7 +144,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                        class="form-control"
                                        value="<?= e($user['last_name'] ?? '') ?>"
                                        maxlength="80"
-                                       required aria-required="true">
+                                       required>
                             </div>
                         </div>
 
@@ -179,7 +179,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         <div class="row g-3 mb-4">
                             <div class="col-sm-6">
                                 <label for="new_password" class="form-label">New Password</label>
-                                <input type="new_password" id="new_password" name="new_password"
+                                <input type="password" id="new_password" name="new_password"
                                        class="form-control" autocomplete="new-password"
                                        aria-describedby="pw-note">
                                 <div class="form-text" id="pw-note">Min 10 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character.</div>

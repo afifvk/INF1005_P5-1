@@ -137,12 +137,12 @@ img {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-lg);
-    padding: 2.75rem; /* more room so inner card centers with equal borders */
+    padding: 2.75rem;
     text-align: center;
     backdrop-filter: blur(8px);
     position: relative;
     box-shadow: 0 12px 28px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
-    display: flex; /* center inner content both axis */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -151,8 +151,8 @@ img {
 .hero-image-block .quiz-card {
     display: flex;
     flex-direction: column;
-    align-items: center; /* center content inside the inner card */
-    width: 360px; /* fixed width for equal inner borders */
+    align-items: center;
+    width: 360px;
     max-width: calc(100% - 60px);
     margin: 0 auto;
     background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.015));
@@ -187,7 +187,7 @@ img {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0.75rem 0 0 0; /* keep a balanced gap */
+    margin: 0.75rem 0 0 0;
     padding: 0.85rem 1.2rem;
     text-align: center;
     font-size: 0.95rem;
@@ -200,20 +200,18 @@ img {
     word-break: break-word;
 }
 
-
 .hero-image-block { text-align: center; }
 
 .hero-image-block::after {
     content: '';
     position: absolute;
-    inset: 18px; /* larger inset yields equal visible border around inner card */
+    inset: 18px;
     border-radius: calc(var(--radius-lg) - 6px);
     pointer-events: none;
     box-shadow: 0 20px 40px rgba(0,0,0,0.10);
-    opacity: 0.18; /* softer halo */
+    opacity: 0.18;
     mix-blend-mode: multiply;
 }
-
 
 .quiz-panel-wrapper {
     display: flex;
@@ -232,7 +230,7 @@ img {
     }
     .hero-image-block {
         padding: 2.25rem;
-        max-width: 520px; 
+        max-width: 520px;
     }
 }
 
@@ -534,7 +532,7 @@ img {
 /* ---------- Footer ---------- */
 .site-footer {
     background: #111a17;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255,255,255,0.87); /* was 0.75 — fails AA on dark bg; 0.87 = #dedede equivalent, passes */
     margin-top: auto;
 }
 
@@ -554,13 +552,52 @@ img {
 
 .footer-links li + li { margin-top: 0.5rem; }
 .footer-links a {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.87); /* was 0.6 — fails AA; bumped to match body */
     font-size: 0.9rem;
     transition: color var(--transition);
 }
 .footer-links a:hover { color: var(--color-highlight); }
 
 .footer-divider { border-color: rgba(255,255,255,0.1); }
+
+/* Override Bootstrap .text-muted so it passes WCAG AA on both
+   light (#faf9f7) and dark (#111a17) backgrounds.
+   Bootstrap's default #6c757d fails at 4.46:1 on --color-bg.
+   #595450 = 7.11:1 on --color-bg, 7.48:1 on white, 3.0:1 on footer
+   (footer .text-muted is also overridden via .site-footer below) */
+.text-muted {
+    color: #595450 !important;
+}
+
+/* On the dark footer, Bootstrap's .text-muted would still be too light
+   to pass. Inherit the footer body colour instead. */
+.site-footer .text-muted {
+    color: rgba(255,255,255,0.87) !important;
+}
+
+/* Override Bootstrap .btn-outline-danger text/border colour.
+   Bootstrap's default #dc3545 is 4.53:1 on white — axe flags it.
+   #9c1f2e = 7.93:1 on white, keeps the red intent. */
+.btn-outline-danger {
+    --bs-btn-color:        #9c1f2e;
+    --bs-btn-border-color: #9c1f2e;
+    --bs-btn-hover-bg:     #9c1f2e;
+    --bs-btn-hover-border-color: #9c1f2e;
+    --bs-btn-active-bg:    #7b1623;
+    --bs-btn-active-border-color: #7b1623;
+}
+
+/* Override Bootstrap .btn-outline-secondary text/border colour.
+   Bootstrap's default #6c757d is 4.46:1 on --color-bg — fails AA.
+   #495057 = 8.18:1 on white, 7.77:1 on --color-bg, passes comfortably. */
+.btn-outline-secondary {
+    --bs-btn-color:        #495057;
+    --bs-btn-border-color: #495057;
+    --bs-btn-hover-bg:     #495057;
+    --bs-btn-hover-border-color: #495057;
+    --bs-btn-active-bg:    #3d4349;
+    --bs-btn-active-border-color: #3d4349;
+}
 
 /* ---------- Features Strip ---------- */
 .features-strip {
@@ -657,6 +694,18 @@ img {
     font-size: 0.9rem;
 }
 
+/* ---------- Badge contrast fixes ---------- */
+/* All status badges use the site's accent green — consistent, on-brand,
+   white text passes WCAG AA (--color-accent #2d4a3e = 10.1:1 on white). */
+.badge.bg-warning,
+.badge.bg-info,
+.badge.bg-success,
+.badge.bg-secondary,
+.badge.bg-danger {
+    background-color: var(--color-accent) !important;
+    color: #fff !important;
+}
+
 /* ---------- Alerts ---------- */
 .alert-success { background: rgba(39,174,96,0.1); border-color: rgba(39,174,96,0.3); color: #1a5e36; }
 .alert-danger  { background: rgba(192,57,43,0.1); border-color: rgba(192,57,43,0.3); color: #7f2112; }
@@ -735,7 +784,6 @@ img {
 }
 .quiz-full .quiz-side-inner { max-width: 360px; }
 
-/* Nudge white panels lower so they sit visually below the green hero */
 .quiz-full .form-wrapper,
 .quiz-full #quiz-results {
     margin-top: 1.25rem;
@@ -745,11 +793,10 @@ img {
     .quiz-full { padding-top: 2rem; min-height: auto; }
 }
 
-
 .quiz-panel-wrapper {
     display: flex;
-    gap: 1.75rem;              
-    align-items: stretch;       
+    gap: 1.75rem;
+    align-items: stretch;
     max-width: 1100px;
     margin: 0 auto;
     padding-top: 1.25rem;
@@ -761,20 +808,17 @@ img {
     flex-direction: column;
 }
 
-
 .quiz-panel .form-wrapper,
 #quiz-results .form-wrapper {
-    min-height: 520px;             
+    min-height: 520px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;  
+    justify-content: space-between;
     padding: 1.25rem;
 }
 
-
 .quiz-panel .form-wrapper .d-flex,
 .quiz-panel .form-wrapper .d-flex { margin-top: 0.5rem; }
-
 
 #quiz-results .row { justify-content: center; }
 #quiz-results .value-card { margin: 0.5rem auto; max-width: 220px; }
@@ -792,9 +836,8 @@ img {
 }
 
 /* ---------- Quiz form & results ---------- */
-visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+.visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
 
-/* Quiz results — keep recommendation cards self-contained and prevent CTA overflow */
 #quiz-results .value-card {
     display: block;
     padding: 1.25rem;
@@ -826,15 +869,12 @@ visually-hidden { position: absolute !important; height: 1px; width: 1px; overfl
 .quiz-option .opt-label { font-weight:600;color:var(--color-text);font-size:0.95rem }
 .quiz-option .opt-sub { font-size:0.82rem;color:var(--color-muted); }
 
-/* selected state */
 .quiz-option.selected { border-color: var(--color-accent); background: rgba(61,107,90,0.04); box-shadow: 0 8px 24px rgba(45,74,62,0.08); transform: translateY(-4px); }
 .quiz-option.selected::after { content: '' ; display:block; }
 
-/* subtle selection animation */
 .quiz-option .opt-img { transition: transform 0.28s ease; }
 .quiz-option.selected .opt-img { transform: scale(1.06); }
 
-/* smaller screens: stack options */
 @media (max-width: 768px) {
     .quiz-options { grid-template-columns: repeat(2, 1fr); }
 }
@@ -842,16 +882,15 @@ visually-hidden { position: absolute !important; height: 1px; width: 1px; overfl
     .quiz-options { grid-template-columns: 1fr; }
 }
 
-/* hide native radios but keep accessible */
 .quiz-option input[type="radio"] { position: absolute !important; opacity: 0; pointer-events: none; height:1px;width:1px }
 
-/* Rectangular quiz panel (less rounded, wider) */
+/* Rectangular quiz panel */
 .quiz-panel.quiz-panel-form {
-    width: 540px; /* slightly wider rectangle */
+    width: 540px;
     flex: 0 0 540px;
 }
 .quiz-panel.quiz-panel-form .form-wrapper {
-    border-radius: 10px; /* reduce corner radius to feel more rectangular */
+    border-radius: 10px;
     padding: 2rem 1.75rem;
     box-shadow: var(--shadow-md);
 }
@@ -865,7 +904,6 @@ visually-hidden { position: absolute !important; height: 1px; width: 1px; overfl
     .quiz-panel.quiz-panel-form { width: 100%; flex: none; }
 }
 
-/* Fade/slide transition helpers for quiz panels */
 .fade-panel {
     transition: opacity 360ms ease, transform 360ms ease;
     will-change: opacity, transform;
@@ -875,7 +913,6 @@ visually-hidden { position: absolute !important; height: 1px; width: 1px; overfl
     transform: translateY(8px) scale(0.997);
     pointer-events: none;
 }
-
 
 #quiz-results .value-card h4 {
     font-family: var(--font-display);
@@ -895,11 +932,9 @@ visually-hidden { position: absolute !important; height: 1px; width: 1px; overfl
     word-break: break-word;
 }
 
-
 @media (max-width: 992px) {
     .quiz-side-box { max-width: 100%; }
 }
-
 
 /* ---------- Gemini Chatbot ---------- */
 .chatbot-shell {

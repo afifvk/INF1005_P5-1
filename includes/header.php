@@ -48,7 +48,7 @@ if (isLoggedIn()) {
     </div>
     <?php endif; ?>
 
-<nav class="navbar navbar-expand-lg sticky-top" role="navigation" aria-label="Main navigation">
+<nav class="navbar navbar-expand-lg sticky-top" aria-label="Main navigation">
     <div class="container ">
 
         <!-- Brand -->

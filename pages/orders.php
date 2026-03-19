@@ -48,13 +48,6 @@ $orders = getUserOrders($userId);
             <div class="d-flex flex-column gap-4">
                 <?php foreach ($orders as $order): ?>
                 <?php
-                    $statusColors = [
-                        'pending'   => 'warning',
-                        'confirmed' => 'info',
-                        'shipped'   => 'primary',
-                        'delivered' => 'success',
-                        'cancelled' => 'danger',
-                    ];
                     $statusIcons = [
                         'pending'   => 'bi-clock',
                         'confirmed' => 'bi-check-circle',
@@ -62,8 +55,7 @@ $orders = getUserOrders($userId);
                         'delivered' => 'bi-bag-check',
                         'cancelled' => 'bi-x-circle',
                     ];
-                    $color = $statusColors[$order['status']] ?? 'secondary';
-                    $icon  = $statusIcons[$order['status']]  ?? 'bi-circle';
+                    $icon = $statusIcons[$order['status']] ?? 'bi-circle';
                 ?>
                 <div class="border rounded p-4">
 
@@ -75,10 +67,6 @@ $orders = getUserOrders($userId);
                                 Placed on <?= date('d M Y, H:i', strtotime($order['created_at'])) ?>
                             </p>
                         </div>
-                        <span class="badge bg-<?= $color ?> fs-6 px-3 py-2">
-                            <i class="bi <?= $icon ?> me-1" aria-hidden="true"></i>
-                            <?= ucfirst($order['status']) ?>
-                        </span>
                     </div>
 
                     <!-- Status Progress Bar -->
@@ -91,12 +79,17 @@ $orders = getUserOrders($userId);
                     <div class="mb-4">
                         <div class="d-flex justify-content-between position-relative" style="z-index:1;">
                             <?php foreach ($steps as $i => $step): ?>
-                            <?php $done = $current !== false && $i <= $current; ?>
+                            <?php
+                                $done        = $current !== false && $i <= $current;
+                                $isPendingStep = ($step === 'pending' && $order['status'] === 'pending');
+                                $circleBg    = !$done ? '#dee2e6' : ($isPendingStep ? '#4d7f6d' : '#3d6b5a');
+                                $circleColor = !$done ? '#aaa' : '#fff';
+                            ?>
                             <div class="text-center flex-fill">
                                 <div class="mx-auto mb-1 rounded-circle d-flex align-items-center justify-content-center"
                                      style="width:32px;height:32px;
-                                            background:<?= $done ? 'var(--bs-' . $color . ')' : '#dee2e6' ?>;
-                                            color:<?= $done ? '#fff' : '#aaa' ?>;">
+                                            background:<?= $circleBg ?>;
+                                            color:<?= $circleColor ?>;">
                                     <i class="bi <?= $statusIcons[$step] ?> small" aria-hidden="true"></i>
                                 </div>
                                 <p class="mb-0 small <?= $done ? 'fw-semibold' : 'text-muted' ?>">
@@ -105,7 +98,7 @@ $orders = getUserOrders($userId);
                             </div>
                             <?php if ($i < count($steps) - 1): ?>
                             <div class="flex-fill" style="margin-top:15px;">
-                                <div style="height:2px;background:<?= ($current !== false && $i < $current) ? 'var(--bs-' . $color . ')' : '#dee2e6' ?>;"></div>
+                                <div style="height:2px;background:<?= ($current !== false && $i < $current) ? '#3d6b5a' : '#dee2e6' ?>;"></div>
                             </div>
                             <?php endif; ?>
                             <?php endforeach; ?>
