@@ -125,6 +125,11 @@ if (isLoggedIn()) {
                                     <i class="bi bi-cart3 me-2" aria-hidden="true"></i>My Cart
                                 </a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="<?= SITE_URL ?>/pages/orders.php">
+                                    <i class="bi bi-bag-check me-2" aria-hidden="true"></i>My Orders
+                                </a>
+                            </li>
                         <?php if (isAdmin()): ?>
 
                         <li><hr class="dropdown-divider"></li>

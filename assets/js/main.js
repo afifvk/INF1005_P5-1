@@ -420,6 +420,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (chatbotForm) {
+            if (chatbotInput) {
+                chatbotInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        chatbotForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    }
+                });
+            }
             chatbotForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 var message = chatbotInput ? chatbotInput.value.trim() : '';

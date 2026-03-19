@@ -69,7 +69,7 @@
 
         <div id="chatbot-messages" class="chatbot-messages" role="log" aria-live="polite" aria-label="Chat messages">
             <div class="chatbot-message chatbot-message-bot">
-                Hello! I’m the Tea Assistant. Ask me about products, recommendations, or where to find something on the site.
+                Hello! I'm the Tea Assistant. Ask me about products, recommendations, or where to find something on the site.
             </div>
         </div>
 
@@ -84,6 +84,19 @@
     </section>
 </div>
 <?php endif; ?>
+
+<!-- Toast notification for Add to Cart -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="cart-toast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2">
+                <i id="cart-toast-icon" class="bi" aria-hidden="true"></i>
+                <span id="cart-toast-msg"></span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
 
 <script>
 window.__APP__ = window.__APP__ || {};
@@ -100,5 +113,66 @@ window.__APP__.geminiChatEnabled = <?= (defined('ENABLE_GEMINI_CHATBOT') && ENAB
 
 <!-- Custom JS -->
 <script src="<?= SITE_URL ?>/assets/js/main.js"></script>
+
+<!-- Add to Cart AJAX + Toast -->
+<script>
+(function () {
+    function showToast(message, success) {
+        const toastEl  = document.getElementById('cart-toast');
+        const msgEl    = document.getElementById('cart-toast-msg');
+        const iconEl   = document.getElementById('cart-toast-icon');
+
+        msgEl.textContent = message;
+
+        if (success) {
+            toastEl.className = 'toast align-items-center border-0 text-bg-success';
+            iconEl.className  = 'bi bi-cart-check-fill';
+        } else {
+            toastEl.className = 'toast align-items-center border-0 text-bg-danger';
+            iconEl.className  = 'bi bi-exclamation-circle-fill';
+        }
+
+        const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
+        toast.show();
+    }
+
+    function updateCartBadge(count) {
+        const badge = document.getElementById('cart-badge');
+        if (!badge) return;
+        badge.textContent = count;
+        badge.style.display = count > 0 ? '' : 'none';
+    }
+
+    // Intercept any "Add to Cart" form submission (action=add)
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+
+        // Only intercept forms that POST action=add to cart_action.php
+        const actionInput = form.querySelector('input[name="action"]');
+        if (!actionInput || actionInput.value !== 'add') return;
+
+        e.preventDefault();
+
+        const data = new FormData(form);
+
+        fetch(window.__APP__.siteUrl + '/pages/cart_action.php', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: data,
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (json) {
+            showToast(json.message, json.success);
+            if (json.success && json.cart_count !== undefined) {
+                updateCartBadge(json.cart_count);
+            }
+        })
+        .catch(function () {
+            showToast('Something went wrong. Please try again.', false);
+        });
+    });
+})();
+</script>
+
 </body>
 </html>

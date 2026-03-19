@@ -16,8 +16,6 @@ if (!isLoggedIn()) {
     redirect(SITE_URL . '/pages/login.php');
 }
 
-
-
 $userId = (int)$_SESSION['user_id'];
 $items  = getCartItems($userId);
 $total  = getCartTotal($userId);
@@ -48,6 +46,7 @@ $user   = getUserById($userId);
                 </div>
             <?php endif; ?>
         </div>
+
         <!-- Breadcrumb -->
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="breadcrumb">
@@ -55,8 +54,6 @@ $user   = getUserById($userId);
                 <li class="breadcrumb-item active" aria-current="page">Cart</li>
             </ol>
         </nav>
-
-        
 
         <h1 id="cart-heading" class="mb-4">
             <i class="bi bi-cart3 me-2" aria-hidden="true"></i>
@@ -199,13 +196,28 @@ $user   = getUserById($userId);
                     </p>
                     <?php endif; ?>
 
-                    <!-- Checkout button (placeholder — extend with payment gateway) -->
-                    <button type="button"
-                            class="btn-gold w-100 py-3 rounded"
-                            onclick="alert('Checkout would proceed to payment in a full implementation.')">
-                        <i class="bi bi-lock me-1" aria-hidden="true"></i>
-                        Proceed to Checkout
-                    </button>
+                    <!-- Checkout form -->
+                    <?php if (empty($user['address'])): ?>
+                        <p class="small text-danger mb-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            Please <a href="profile.php">add a shipping address</a> before checking out.
+                        </p>
+                        <button class="btn-gold w-100 py-3 rounded" disabled>
+                            <i class="bi bi-lock me-1" aria-hidden="true"></i>
+                            Proceed to Checkout
+                        </button>
+                    <?php else: ?>
+                        <form method="POST" action="cart_action.php">
+                            <input type="hidden" name="action" value="checkout">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                            <button type="submit"
+                                    class="btn-gold w-100 py-3 rounded"
+                                    onclick="return confirm('Confirm your order?')">
+                                <i class="bi bi-lock me-1" aria-hidden="true"></i>
+                                Proceed to Checkout
+                            </button>
+                        </form>
+                    <?php endif; ?>
 
                     <div class="text-center mt-3">
                         <a href="products.php" class="small text-muted">
