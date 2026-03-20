@@ -161,6 +161,23 @@ $products = getAllProducts();
 @media (max-width: 767px) {
     .filter-sidebar { position: static; margin-bottom: 24px; }
 }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+.product-card{
+    animation: fadeInUp 0.3s ease both;
+}
 </style>
 
 <section class="section-pad" aria-labelledby="catalogue-heading">
@@ -306,6 +323,9 @@ $products = getAllProducts();
             const html = await res.text();
             loadingEl.classList.remove('is-active');
             container.innerHTML = html;
+            container.querySelectorAll('.product-card').forEach(function(card,i) {
+                card.style.animationDelay = (i * 0.05) + 's';
+            });
 
             const cards = container.querySelectorAll('.product-card');
             countEl.innerHTML = cards.length > 0
