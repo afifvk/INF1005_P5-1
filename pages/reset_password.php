@@ -68,16 +68,15 @@ require_once __DIR__ . '/../includes/header.php';
 
                         <div class="mb-3">
                             <label for="password" class="form-label">New Password</label>
-                            <div class="form-text mb-2">
+                            <p class="form-text mb-2">
                                 Must contain at least 10 characters, one uppercase letter, one lowercase letter, one number, and one special character.
-                            </div>
+                            </p>
                             <input type="password"
                                    id="password"
                                    name="password"
                                    class="form-control"
                                    minlength="10"
                                    required
-                                   aria-required="true"
                                    autocomplete="new-password"
                                    placeholder="New Password">
                         </div>
@@ -89,7 +88,6 @@ require_once __DIR__ . '/../includes/header.php';
                                    name="confirm_password"
                                    class="form-control"
                                    required
-                                   aria-required="true"
                                    autocomplete="new-password"
                                    placeholder="Confirm New Password">
                         </div>

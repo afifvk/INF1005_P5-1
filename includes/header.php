@@ -9,6 +9,10 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../includes/cart_helpers.php';
 
+if (!defined('SKIP_PAGE_RATE_LIMIT')) {
+    enforcePageRateLimit();
+}
+
 $cartCount = isLoggedIn() ? getCartCount($_SESSION['user_id']) : 0;
 $csrf = generateCsrfToken();
 

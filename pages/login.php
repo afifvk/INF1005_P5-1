@@ -3,11 +3,12 @@ $pageTitle = 'Login';
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
-require_once __DIR__ . '/../includes/header.php';
 
 if (isLoggedIn()) {
     redirect(SITE_URL . '/index.php');
 }
+
+require_once __DIR__ . '/../includes/header.php';
 
 $errors = [];
 $emailVal = '';
@@ -117,15 +118,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </button>
                     </form>
 
-                    <div class="text-center small mb-4">
+                    <p class="text-center small mb-4">
                         <a href="<?= SITE_URL ?>/pages/forgot_password.php">Forgot your password?</a>
-                    </div>
+                    </p>
 
                     <hr class="divider-line">
 
                     <p class="text-center text-muted small mb-0">
                         Don't have an account?
-                        <a href="register.php">Create one here</a>
+                        <a href="register.php" class="text-decoration-underline">Create one here</a>
                     </p>
                 </div>
             </div>

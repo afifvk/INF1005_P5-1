@@ -127,6 +127,14 @@ function isAdmin() {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 }
 
+function requireAdminAccess() {
+    if (!isAdmin()) {
+        http_response_code(403);
+        require_once dirname(__DIR__) . '/pages/403.php';
+        exit;
+    }
+}
+
 function normalizeEmail($email) {
     return strtolower(trim((string) $email));
 }
@@ -574,4 +582,137 @@ function validateRegistration($firstName, $lastName, $email, $password, $confirm
     }
 
     return $errors;
+}
+
+function getClientIp() {
+    $keys = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];
+
+    foreach ($keys as $key) {
+        if (!empty($_SERVER[$key])) {
+            $value = trim((string) $_SERVER[$key]);
+
+            if ($key === 'HTTP_X_FORWARDED_FOR') {
+                $parts = explode(',', $value);
+                $value = trim($parts[0]);
+            }
+
+            if ($value !== '') {
+                return $value;
+            }
+        }
+    }
+
+    return 'unknown';
+}
+
+function getCurrentPageRateLimitAction() {
+    $scriptName = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    $strictPages = ['login.php', 'register.php', 'forgot_password.php', 'verify_pending.php'];
+
+    if (in_array($scriptName, $strictPages, true)) {
+        return 'page_' . str_replace('.php', '', $scriptName);
+    }
+
+    return 'page_general';
+}
+
+function getCurrentPageRateLimitConfig() {
+    $action = getCurrentPageRateLimitAction();
+    $strictActions = ['page_login', 'page_register', 'page_forgot_password', 'page_verify_pending'];
+
+    if (in_array($action, $strictActions, true)) {
+        return [
+            'action' => $action,
+            'max_requests' => AUTH_PAGE_RATE_LIMIT_MAX_REQUESTS,
+            'window_seconds' => AUTH_PAGE_RATE_LIMIT_WINDOW_SECONDS,
+        ];
+    }
+
+    return [
+        'action' => $action,
+        'max_requests' => GENERAL_PAGE_RATE_LIMIT_MAX_REQUESTS,
+        'window_seconds' => GENERAL_PAGE_RATE_LIMIT_WINDOW_SECONDS,
+    ];
+}
+
+function countRecentRateLimitRequests($action, $identifier, $windowSeconds) {
+    $pdo = getDB();
+    $cutoff = date('Y-m-d H:i:s', time() - (int) $windowSeconds);
+
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*)
+        FROM rate_limits
+        WHERE action = ?
+          AND identifier = ?
+          AND created_at >= ?
+    ");
+    $stmt->execute([$action, $identifier, $cutoff]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function recordRateLimitRequest($action, $identifier) {
+    $pdo = getDB();
+
+    $stmt = $pdo->prepare("
+        INSERT INTO rate_limits (action, identifier)
+        VALUES (?, ?)
+    ");
+    $stmt->execute([$action, $identifier]);
+}
+
+function cleanupOldRateLimitEntries($maxAgeSeconds = 86400) {
+    static $cleaned = false;
+
+    if ($cleaned) {
+        return;
+    }
+
+    $cleaned = true;
+
+    try {
+        $pdo = getDB();
+        $cutoff = date('Y-m-d H:i:s', time() - (int) $maxAgeSeconds);
+
+        $stmt = $pdo->prepare("
+            DELETE FROM rate_limits
+            WHERE created_at < ?
+        ");
+        $stmt->execute([$cutoff]);
+    } catch (Throwable $e) {
+        error_log('Rate limit cleanup failed: ' . $e->getMessage());
+    }
+}
+
+function enforcePageRateLimit() {
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $path = parse_url($requestUri, PHP_URL_PATH);
+    $path = is_string($path) ? $path : '';
+    $basename = basename($path);
+
+    if (preg_match('/\.(css|js|png|jpe?g|gif|svg|webp)$/i', $path)) {
+        return;
+    }
+
+    if (in_array($basename, ['403.php', '404.php', '429.php'], true)) {
+        return;
+    }
+
+    cleanupOldRateLimitEntries();
+
+    $config = getCurrentPageRateLimitConfig();
+    $identifier = getClientIp();
+    $requestCount = countRecentRateLimitRequests(
+        $config['action'],
+        $identifier,
+        $config['window_seconds']
+    );
+
+    if ($requestCount >= (int) $config['max_requests']) {
+        http_response_code(429);
+        require_once dirname(__DIR__) . '/pages/429.php';
+        exit;
+    }
+
+    recordRateLimitRequest($config['action'], $identifier);
 }

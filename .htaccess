@@ -44,3 +44,8 @@ Options -Indexes
 # Prevent PHP errors from leaking sensitive information
 php_flag display_errors Off
 php_flag log_errors On
+
+# Custom error pages
+ErrorDocument 403 /pages/403.php
+ErrorDocument 404 /pages/404.php
+ErrorDocument 429 /pages/429.php

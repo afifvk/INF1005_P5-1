@@ -71,7 +71,6 @@ require_once __DIR__ . '/../includes/header.php';
                                    value="<?= e($emailVal) ?>"
                                    autocomplete="email"
                                    required
-                                   aria-required="true"
                                    placeholder="you@example.com">
                         </div>
 
@@ -90,7 +89,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <p class="text-center text-muted small mb-0">
                         Remembered your password?
-                        <a href="<?= SITE_URL ?>/pages/login.php">Back to login</a>
+                        <a href="<?= SITE_URL ?>/pages/login.php" class="text-decoration-underline">Back to login</a>
                     </p>
                 </div>
             </div>

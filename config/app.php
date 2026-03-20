@@ -26,6 +26,13 @@ define('RECAPTCHA_SITE_KEY', '6Le6SIIsAAAAAKSab4IdtBdfnBNS4_LlpY3MdirQ');
 define('RECAPTCHA_SECRET_KEY', '6Le6SIIsAAAAAIn7BBHUTow9T8-sWKFP_oxnprKQ');
 
 
+
+// Page rate limiting
+if (!defined('AUTH_PAGE_RATE_LIMIT_MAX_REQUESTS')) define('AUTH_PAGE_RATE_LIMIT_MAX_REQUESTS', 10);
+if (!defined('AUTH_PAGE_RATE_LIMIT_WINDOW_SECONDS')) define('AUTH_PAGE_RATE_LIMIT_WINDOW_SECONDS', 60);
+if (!defined('GENERAL_PAGE_RATE_LIMIT_MAX_REQUESTS')) define('GENERAL_PAGE_RATE_LIMIT_MAX_REQUESTS', 60);
+if (!defined('GENERAL_PAGE_RATE_LIMIT_WINDOW_SECONDS')) define('GENERAL_PAGE_RATE_LIMIT_WINDOW_SECONDS', 60);
+
 // Gemini chatbot
 // Keep the website on HTTP if needed; the server will call the Gemini API over HTTPS.
 define('ENABLE_GEMINI_CHATBOT', true);

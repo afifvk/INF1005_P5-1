@@ -6,7 +6,7 @@ require_once dirname(__DIR__) . '/includes/auth_helpers.php';
 require_once dirname(__DIR__) . '/includes/cart_helpers.php';
 
 if (isLoggedIn()) {
-    redirect(SITE_URL . '/pages/login.php');
+    redirect(SITE_URL . '/index.php');
 }
 
 $errors   = [];
@@ -114,7 +114,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                        maxlength="80"
                                        autocomplete="family-name"
                                        required
-                                       aria-required="true"
                                        placeholder="Smith">
                             </div>
                         </div>
@@ -130,7 +129,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                    value="<?= e($formData['email']) ?>"
                                    autocomplete="email"
                                    required
-                                   aria-required="true"
                                    aria-describedby="email-feedback"
                                    placeholder="you@example.com">
                             <div class="invalid-feedback" id="email-feedback"></div>
@@ -150,16 +148,15 @@ require_once dirname(__DIR__) . '/includes/header.php';
                             <label for="password" class="form-label">
                                 Password <span class="text-danger" aria-hidden="true">*</span>
                             </label>
-                            <div class="form-text mb-2">
+                            <p class="form-text mb-2" id="password-help">
                                 Must contain at least 10 characters, one uppercase letter, one lowercase letter, one number, and one special character.
-                            </div>
+                            </p>
                             <input type="password"
                                    id="password"
                                    name="password"
                                    class="form-control"
                                    minlength="10"
                                    required
-                                   aria-required="true"
                                    autocomplete="new-password"
                                    aria-describedby="password-help"
                                    placeholder="Password">
@@ -174,7 +171,6 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                    name="confirm_password"
                                    class="form-control"
                                    required
-                                   aria-required="true"
                                    autocomplete="new-password"
                                    placeholder="Confirm Password">
                         </div>
@@ -196,7 +192,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
 
                     <p class="text-center text-muted small mb-0">
                         Already have an account?
-                        <a href="login.php">Log in here</a>
+                        <a href="login.php" class="text-decoration-underline">Log in here</a>
                     </p>
                 </div>
             </div>
