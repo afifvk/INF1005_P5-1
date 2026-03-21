@@ -138,8 +138,8 @@ if (isLoggedIn()) {
 
                         <li><hr class="dropdown-divider"></li>
 
-                        <li>
-                            <a class="dropdown-item" href="<?= SITE_URL ?>/admin/index.php">
+                                           <li>
+                            <a class="dropdown-item" href="<?= SITE_URL ?>/admin/dashboard.php">
                                 <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>
                                 Admin Dashboard
                             </a>
@@ -149,6 +149,18 @@ if (isLoggedIn()) {
                             <a class="dropdown-item" href="<?= SITE_URL ?>/admin/inventory.php">
                                 <i class="bi bi-box-seam me-2" aria-hidden="true"></i>
                                 Manage Inventory
+                            </a>
+                        </li>
+                                                <li>
+                            <a class="dropdown-item" href="<?= SITE_URL ?>/admin/manageOrders.php">
+                                <i class="bi bi-box-seam me-2" aria-hidden="true"></i>
+                                Manage Orders
+                            </a>
+                        </li>
+                                                <li>
+                            <a class="dropdown-item" href="<?= SITE_URL ?>/admin/users.php">
+                                <i class="bi bi-box-seam me-2" aria-hidden="true"></i>
+                                Manage Users
                             </a>
                         </li>
 

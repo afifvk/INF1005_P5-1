@@ -1,11 +1,11 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 
 requireAdminAccess();
-
 
 $pdo = getDB();
 $pageTitle = 'Manage Inventory';
@@ -79,24 +79,17 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="container mt-4 mb-5">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
         <div>
-            <h2 class="mb-1">Manage Inventory</h2>
+            <h1 class="h2 mb-1">Manage Inventory</h1>
             <p class="text-muted mb-0">Filter, sort, and update your product inventory from one place.</p>
         </div>
-
-        <button type="button"
-                class="btn btn-success"
-                data-bs-toggle="modal"
-                data-bs-target="#addInventoryModal">
-            <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
-            Add Inventory
-        </button>
+        <a href="<?= SITE_URL ?>/admin/dashboard.php" class="btn btn-outline-secondary">Back to Dashboard</a>
     </div>
 
-    <div class="card mb-4 shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-header">Filter &amp; Sort Inventory</div>
         <div class="card-body">
             <form method="GET" class="row g-3 align-items-end">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <label for="inventory-search" class="form-label">Search</label>
                     <input type="text"
                            id="inventory-search"
@@ -129,16 +122,26 @@ require_once __DIR__ . '/../includes/header.php';
                     </select>
                 </div>
 
-                <div class="col-md-1 d-grid">
+                <div class="col-md-2 d-grid">
                     <button type="submit" class="btn btn-primary">Apply</button>
                 </div>
 
-                <div class="col-12 d-flex flex-column flex-md-row justify-content-between gap-2 pt-1">
+                <div class="col-12 d-flex justify-content-between align-items-center pt-1">
                     <small class="text-muted">Showing <?= count($products) ?> product<?= count($products) === 1 ? '' : 's' ?>.</small>
-                    <a href="<?= SITE_URL ?>/admin/inventory.php" class="btn btn-outline-secondary btn-sm align-self-start align-self-md-auto">Reset Filters</a>
+                    <a href="<?= SITE_URL ?>/admin/inventory.php" class="btn btn-outline-secondary btn-sm">Reset Filters</a>
                 </div>
             </form>
         </div>
+    </div>
+
+    <div class="d-flex justify-content-end mb-4">
+        <button type="button"
+                class="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#addInventoryModal">
+            <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
+            Add Inventory
+        </button>
     </div>
 
     <div class="card shadow-sm">
@@ -189,16 +192,18 @@ require_once __DIR__ . '/../includes/header.php';
                                 <input type="text"
                                        name="name"
                                        value="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"
-                                       class="form-control"
+                                       class="form-control form-control-sm"
                                        form="<?= $formId ?>"
+                                       aria-label="Product name for product <?= (int)$product['id'] ?>"
                                        required>
                             </td>
 
                             <td>
                                 <textarea name="description"
-                                          class="form-control"
+                                          class="form-control form-control-sm"
                                           rows="2"
                                           form="<?= $formId ?>"
+                                          aria-label="Description for product <?= (int)$product['id'] ?>"
                                           required><?= htmlspecialchars($product['description'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
                             </td>
 
@@ -208,8 +213,9 @@ require_once __DIR__ . '/../includes/header.php';
                                        step="0.01"
                                        min="0"
                                        value="<?= htmlspecialchars((string)$product['price'], ENT_QUOTES, 'UTF-8') ?>"
-                                       class="form-control"
+                                       class="form-control form-control-sm"
                                        form="<?= $formId ?>"
+                                       aria-label="Price for product <?= (int)$product['id'] ?>"
                                        required>
                             </td>
 
@@ -218,8 +224,9 @@ require_once __DIR__ . '/../includes/header.php';
                                        name="stock"
                                        min="0"
                                        value="<?= (int)$product['stock'] ?>"
-                                       class="form-control"
+                                       class="form-control form-control-sm"
                                        form="<?= $formId ?>"
+                                       aria-label="Stock for product <?= (int)$product['id'] ?>"
                                        required>
                             </td>
 
