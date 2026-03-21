@@ -167,6 +167,10 @@ require_once __DIR__ . '/../includes/header.php';
                         <?php
                         $formId = 'update-product-' . (int)$product['id'];
                         $inStock = ((int)$product['stock']) > 0;
+                        $productName = htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8');
+                        $productImg = !empty($product['image'])
+                            ? SITE_URL . '/assets/images/' . htmlspecialchars($product['image'], ENT_QUOTES, 'UTF-8')
+                            : SITE_URL . '/assets/images/placeholder.svg';
                         ?>
                         <tr>
                             <td>
@@ -178,20 +182,32 @@ require_once __DIR__ . '/../includes/header.php';
                             </td>
 
                             <td>
-                                <?php if (!empty($product['image'])): ?>
-                                    <img src="<?= SITE_URL ?>/uploads/<?= htmlspecialchars($product['image'], ENT_QUOTES, 'UTF-8') ?>"
-                                         alt="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"
+                                <div class="d-flex flex-column align-items-center gap-2">
+                                    <img src="<?= $productImg ?>"
+                                         alt="<?= $productName ?>"
                                          width="70"
-                                         class="img-thumbnail inventory-product-image">
-                                <?php else: ?>
-                                    <span class="text-muted small">No image</span>
-                                <?php endif; ?>
+                                         class="img-thumbnail"
+                                         onerror="this.src='<?= SITE_URL ?>/assets/images/placeholder.svg'"
+                                         style="cursor:pointer;"
+                                         role="button"
+                                         tabindex="0"
+                                         aria-label="View larger image of <?= $productName ?>"
+                                         onclick="openImageModal(this.src, '<?= $productName ?>')"
+                                         onkeydown="if(event.key==='Enter')this.click()">
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm"
+                                            style="font-size: 0.7rem;"
+                                            aria-label="Change image for <?= $productName ?>"
+                                            onclick="openChangeImageModal(<?= (int)$product['id'] ?>, '<?= $productName ?>', '<?= $productImg ?>')">
+                                        <i class="bi bi-pencil-square" aria-hidden="true"></i> Change
+                                    </button>
+                                </div>
                             </td>
 
                             <td>
                                 <input type="text"
                                        name="name"
-                                       value="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"
+                                       value="<?= $productName ?>"
                                        class="form-control form-control-sm"
                                        form="<?= $formId ?>"
                                        aria-label="Product name for product <?= (int)$product['id'] ?>"
@@ -237,9 +253,7 @@ require_once __DIR__ . '/../includes/header.php';
                             </td>
 
                             <td>
-                                <button type="submit" class="btn btn-primary btn-sm" form="<?= $formId ?>">
-                                    Save
-                                </button>
+                                <button type="submit" class="btn btn-primary btn-sm" form="<?= $formId ?>">Save</button>
                             </td>
 
                             <td>
@@ -309,5 +323,84 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- Image Lightbox Modal -->
+<div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageLightboxLabel">Product Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <img id="lightbox-img"
+                     src=""
+                     alt=""
+                     class="img-fluid rounded shadow"
+                     style="max-height: 70vh; object-fit: contain;"
+                     onerror="this.src='<?= SITE_URL ?>/assets/images/placeholder.svg'">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Image Modal -->
+<div class="modal fade" id="changeImageModal" tabindex="-1" aria-labelledby="changeImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeImageModalLabel">Change Product Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?= SITE_URL ?>/admin/update_product_image.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id" id="changeImageProductId" value="">
+                <input type="hidden" name="return_to" value="<?= htmlspecialchars($returnTo, ENT_QUOTES, 'UTF-8') ?>">
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <img id="changeImagePreview"
+                             src=""
+                             alt=""
+                             class="img-fluid rounded shadow-sm"
+                             style="max-height: 200px; object-fit: contain;"
+                             onerror="this.src='<?= SITE_URL ?>/assets/images/placeholder.svg'">
+                    </div>
+                    <div>
+                        <label for="changeImageFile" class="form-label">Select new image</label>
+                        <input type="file"
+                               id="changeImageFile"
+                               name="image"
+                               accept="image/*"
+                               class="form-control"
+                               required
+                               onchange="if(this.files[0]){document.getElementById('changeImagePreview').src=URL.createObjectURL(this.files[0])}">
+                        <div class="form-text">Accepted formats: JPG, PNG, GIF, WEBP</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload Image</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openImageModal(src, name) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-img').alt = name;
+    document.getElementById('imageLightboxLabel').textContent = name;
+    new bootstrap.Modal(document.getElementById('imageLightboxModal')).show();
+}
+
+function openChangeImageModal(productId, productName, currentImgSrc) {
+    document.getElementById('changeImageProductId').value = productId;
+    document.getElementById('changeImageModalLabel').textContent = 'Change Image — ' + productName;
+    document.getElementById('changeImagePreview').src = currentImgSrc;
+    document.getElementById('changeImagePreview').alt = productName;
+    document.getElementById('changeImageFile').value = '';
+    new bootstrap.Modal(document.getElementById('changeImageModal')).show();
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

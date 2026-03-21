@@ -30,7 +30,7 @@ if (!isset($_FILES['image']) || ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE
 }
 
 $imageName = basename((string)$_FILES['image']['name']);
-$uploadPath = __DIR__ . '/../uploads/' . $imageName;
+$uploadPath = __DIR__ . '/../assets/images/' . $imageName;
 
 if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
     die('Failed to upload image.');
