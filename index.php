@@ -124,19 +124,19 @@ $quizCatalog = array_map(static function ($p) {
                                 <div class="quiz-options" role="radiogroup" aria-labelledby="q1-legend">
                                     <label class="quiz-option" data-value="light">
                                         <input type="radio" name="q1" value="light" required>
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Light & floral">
+                                        <img class="opt-img" src="/assets/images/lightandfloral.png" alt="Light & floral">
                                         <div class="opt-label">Light &amp; floral</div>
                                         <div class="opt-sub">Delicate, floral notes</div>
                                     </label>
                                     <label class="quiz-option" data-value="earthy">
                                         <input type="radio" name="q1" value="earthy">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Earthy & robust">
+                                        <img class="opt-img" src="/assets/images/earthyandrobust.png" alt="Earthy & robust">
                                         <div class="opt-label">Earthy &amp; robust</div>
                                         <div class="opt-sub">Deep, grounded flavours</div>
                                     </label>
                                     <label class="quiz-option" data-value="sweet">
                                         <input type="radio" name="q1" value="sweet">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Sweet & aromatic">
+                                        <img class="opt-img" src="/assets/images/sweetandromantic.png" alt="Sweet & aromatic">
                                         <div class="opt-label">Sweet &amp; aromatic</div>
                                         <div class="opt-sub">Warm, fragrant notes</div>
                                     </label>
@@ -148,19 +148,19 @@ $quizCatalog = array_map(static function ($p) {
                                 <div class="quiz-options">
                                     <label class="quiz-option" data-value="morning">
                                         <input type="radio" name="q2" value="morning" required>
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Morning boost">
+                                        <img class="opt-img" src="/assets/images/morningboost.png" alt="Morning boost">
                                         <div class="opt-label">Morning boost</div>
                                         <div class="opt-sub">Energising and bright</div>
                                     </label>
                                     <label class="quiz-option" data-value="afternoon">
                                         <input type="radio" name="q2" value="afternoon">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Afternoon calm">
+                                        <img class="opt-img" src="/assets/images/afternooncalm.png" alt="Afternoon calm">
                                         <div class="opt-label">Afternoon calm</div>
                                         <div class="opt-sub">Light and soothing</div>
                                     </label>
                                     <label class="quiz-option" data-value="evening">
                                         <input type="radio" name="q2" value="evening">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Evening relaxation">
+                                        <img class="opt-img" src="/assets/images/eveningrelaxation.png" alt="Evening relaxation">
                                         <div class="opt-label">Evening relaxation</div>
                                         <div class="opt-sub">Calming, low caffeine</div>
                                     </label>
@@ -172,19 +172,19 @@ $quizCatalog = array_map(static function ($p) {
                                 <div class="quiz-options">
                                     <label class="quiz-option" data-value="adventurous">
                                         <input type="radio" name="q3" value="adventurous" required>
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Adventurous">
+                                        <img class="opt-img" src="/assets/images/adventurous.png" alt="Adventurous">
                                         <div class="opt-label">Adventurous</div>
                                         <div class="opt-sub">Try bold blends</div>
                                     </label>
                                     <label class="quiz-option" data-value="cozy">
                                         <input type="radio" name="q3" value="cozy">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Cozy">
+                                        <img class="opt-img" src="/assets/images/cozy.png" alt="Cozy">
                                         <div class="opt-label">Cozy</div>
                                         <div class="opt-sub">Comforting and warm</div>
                                     </label>
                                     <label class="quiz-option" data-value="focused">
                                         <input type="radio" name="q3" value="focused">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Focused">
+                                        <img class="opt-img" src="/assets/images/focused.png" alt="Focused">
                                         <div class="opt-label">Focused</div>
                                         <div class="opt-sub">Crisp and clear</div>
                                     </label>
@@ -196,19 +196,19 @@ $quizCatalog = array_map(static function ($p) {
                                 <div class="quiz-options">
                                     <label class="quiz-option" data-value="citrus">
                                         <input type="radio" name="q4" value="citrus" required>
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Citrus">
+                                        <img class="opt-img" src="/assets/images/citrus.png" alt="Citrus">
                                         <div class="opt-label">Citrus</div>
                                         <div class="opt-sub">Zesty, uplifting</div>
                                     </label>
                                     <label class="quiz-option" data-value="vanilla">
                                         <input type="radio" name="q4" value="vanilla">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Vanilla">
+                                        <img class="opt-img" src="/assets/images/vanilla.png" alt="Vanilla">
                                         <div class="opt-label">Vanilla</div>
                                         <div class="opt-sub">Creamy, smooth</div>
                                     </label>
                                     <label class="quiz-option" data-value="smoky">
                                         <input type="radio" name="q4" value="smoky">
-                                        <img class="opt-img" src="/assets/images/placeholder.svg" alt="Smoky">
+                                        <img class="opt-img" src="/assets/images/smoky.png" alt="Smoky">
                                         <div class="opt-label">Smoky</div>
                                         <div class="opt-sub">Rich, toasted notes</div>
                                     </label>
