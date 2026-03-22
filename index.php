@@ -7,6 +7,15 @@ require_once __DIR__ . '/includes/product_helpers.php';
 require_once __DIR__ . '/includes/header.php';
 
 $featuredProducts = array_slice(getAllProducts(), 0, 3);
+$quizCatalog = array_map(static function ($p) {
+    return [
+        'id' => (int)$p['id'],
+        'name' => (string)($p['name'] ?? ''),
+        'description' => (string)($p['description'] ?? ''),
+        'flavour' => (string)($p['flavour'] ?? ''),
+        'caffeine_level' => (string)($p['caffeine_level'] ?? '')
+    ];
+}, getAllProducts());
 ?>
 
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -51,6 +60,7 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
     window.__APP__ = window.__APP__ || {};
     window.__APP__.isLoggedIn = <?= isLoggedIn() ? 'true' : 'false' ?>;
     window.__APP__.csrfToken  = '<?= $csrf ?>';
+    window.__APP__.quizCatalog = <?= json_encode($quizCatalog, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
 
 <!-- FEATURES STRIP -->

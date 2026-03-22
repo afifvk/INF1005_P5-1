@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ── Personalitea Quiz: show/hide and basic result mapping ──
+ 
     var startBtn = document.getElementById('start-quiz-btn');
     var quizSection = document.getElementById('quiz-section');
     var quizForm = document.getElementById('personalitea-quiz');
@@ -236,6 +236,63 @@ document.addEventListener('DOMContentLoaded', function() {
     var quizResultsPanel = quizResults ? quizResults.closest('.quiz-panel') : null;
     var quizCancel = document.getElementById('quiz-cancel');
     var APP = window.__APP__ || { isLoggedIn: false, csrfToken: '' };
+    var quizCatalog = Array.isArray(APP.quizCatalog) ? APP.quizCatalog : [];
+
+    function textIncludesAny(text, words) {
+        return words.some(function(word) { return text.indexOf(word) !== -1; });
+    }
+
+    function scoreProductForAnswers(product, answers) {
+        var haystack = [product.name, product.description, product.flavour, product.caffeine_level]
+            .join(' ')
+            .toLowerCase();
+        var score = 0;
+
+        if (answers.q1 === 'light' && textIncludesAny(haystack, ['floral', 'jasmine', 'green', 'white', 'citrus'])) score += 4;
+        if (answers.q1 === 'earthy' && textIncludesAny(haystack, ['earthy', 'smok', 'roast', 'oolong', 'black', 'pu'])) score += 4;
+        if (answers.q1 === 'sweet' && textIncludesAny(haystack, ['sweet', 'honey', 'vanilla', 'milk', 'chamomile'])) score += 4;
+
+        if (answers.q2 === 'morning' && textIncludesAny(haystack, ['high', 'medium', 'black', 'matcha', 'sencha'])) score += 3;
+        if (answers.q2 === 'afternoon' && textIncludesAny(haystack, ['medium', 'green', 'oolong', 'floral'])) score += 3;
+        if (answers.q2 === 'evening' && textIncludesAny(haystack, ['none', 'low', 'herbal', 'rooibos', 'chamomile'])) score += 3;
+
+        if (answers.q3 === 'adventurous' && textIncludesAny(haystack, ['smok', 'spice', 'oolong', 'matcha'])) score += 2;
+        if (answers.q3 === 'cozy' && textIncludesAny(haystack, ['honey', 'vanilla', 'chamomile', 'milk', 'rooibos'])) score += 2;
+        if (answers.q3 === 'focused' && textIncludesAny(haystack, ['green', 'sencha', 'matcha', 'black'])) score += 2;
+
+        if (answers.q4 === 'citrus' && textIncludesAny(haystack, ['citrus', 'bergamot', 'lemon', 'orange'])) score += 2;
+        if (answers.q4 === 'vanilla' && textIncludesAny(haystack, ['vanilla', 'cream', 'milk', 'honey'])) score += 2;
+        if (answers.q4 === 'smoky' && textIncludesAny(haystack, ['smok', 'lapsang', 'roast', 'earthy'])) score += 2;
+
+        return score;
+    }
+
+    function getQuizSuggestions(catalog, answers) {
+        if (!catalog.length) return [];
+
+        var ranked = catalog
+            .map(function(product) {
+                return { product: product, score: scoreProductForAnswers(product, answers) };
+            })
+            .sort(function(a, b) { return b.score - a.score; });
+
+        var picked = ranked.filter(function(row) { return row.score > 0; }).slice(0, 2).map(function(row) { return row.product; });
+        if (picked.length < 2) {
+            catalog.forEach(function(product) {
+                if (picked.length >= 2) return;
+                var exists = picked.some(function(p) { return p.id === product.id; });
+                if (!exists) picked.push(product);
+            });
+        }
+
+        return picked.map(function(product) {
+            return {
+                id: Number(product.id) || 0,
+                title: product.name || 'Tea Recommendation',
+                desc: ((product.description || '').slice(0, 110) + ((product.description || '').length > 110 ? '...' : ''))
+            };
+        });
+    }
 
     // Helpers: animate show/hide using CSS classes defined in stylesheet
     function animateHide(el, cb) {
@@ -335,26 +392,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (answers.q4 === 'smoky') score += 3;
 
             var personality = 'Balanced Sipper';
-            var suggestions = [];
             if (score <= 5) {
                 personality = 'Bright & Floral';
-                suggestions = [
-                    { title: 'Jasmine Blossom', desc: 'A light, floral cup.', filterParam: 'flavours[]=Floral' },
-                    { title: 'Citrus Earl', desc: 'Bright notes for daytime.', filterParam: 'flavours[]=Floral' }
-                ];
             } else if (score <= 8) {
                 personality = 'Cozy Comfort';
-                suggestions = [
-                    { title: 'Vanilla Chai', desc: 'Warm and sweet.', filterParam: 'flavours[]=Sweet' },
-                    { title: 'Honey Rooibos', desc: 'Smooth, caffeine-free option.', filterParam: 'flavours[]=Sweet' }
-                ];
             } else {
                 personality = 'Bold Explorer';
-                suggestions = [
-                    { title: 'Smoky Lapsang', desc: 'Deep and smoky flavors.', filterParam: 'flavours[]=Smoky' },
-                    { title: 'Earthy Pu-erh', desc: 'Rich and grounding.', filterParam: 'flavours[]=Earthy' }
-                ];
             }
+            var suggestions = getQuizSuggestions(quizCatalog, answers);
 
             // Render results. Include a link to browse full catalog.
             if (quizResults) {
@@ -365,20 +410,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     + '<p>Based on your answers, we suggest the following:</p>'
                     + '<div class="row g-3">';
 
+                if (!suggestions.length) {
+                    html += '<div class="col-12"><div class="value-card">'
+                        + '<p class="text-muted mb-0">No direct matches found yet. Explore the full collection below.</p>'
+                        + '</div></div>';
+                }
+
                 suggestions.forEach(function(s, idx) {
                     html += '<div class="col-md-6"><div class="value-card">'
                         + '<h4>' + s.title + '</h4>'
                         + '<p class="text-muted">' + s.desc + '</p>';
 
+                    if (s.id > 0) {
+                        html += '<a class="btn-store-outline mt-2 d-inline-block" href="/pages/product_detail.php?id=' + s.id + '">View tea</a>';
+                    }
+
                     // If logged in, allow saving the first suggestion
                     if (APP.isLoggedIn) {
+                        if (s.id > 0) {
+                            html += '<form class="mt-2" method="POST" action="/pages/cart_action.php">'
+                                + '<input type="hidden" name="action" value="add">'
+                                + '<input type="hidden" name="product_id" value="' + s.id + '">'
+                                + '<input type="hidden" name="csrf_token" value="' + (APP.csrfToken || '') + '">'
+                                + '<button type="submit" class="btn-store"><i class="bi bi-cart-plus" aria-hidden="true"></i> Add to cart</button>'
+                                + '</form>';
+                        }
+
                         html += '<div class="mt-2">'
                             + '<button class="btn-store save-reco" data-product="' + encodeURIComponent(s.title) + '" data-idx="' + idx + '">Save recommendation</button>'
                             + '</div>';
+                    } else if (s.id > 0) {
+                        html += '<a class="btn-store mt-2 d-inline-block" href="/pages/login.php">'
+                            + '<i class="bi bi-cart-plus" aria-hidden="true"></i> Login to add to cart'
+                            + '</a>';
                     }
 
-                    html += '<a class="btn-store-outline mt-2 d-inline-block" href="/pages/products.php?' + s.filterParam + '">View similar</a>'
-                        + '</div></div>';
+                    html += '</div></div>';
                 });
 
                 html += '</div>'

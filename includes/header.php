@@ -134,6 +134,11 @@ if (isLoggedIn()) {
                                     <i class="bi bi-bag-check me-2" aria-hidden="true"></i>My Orders
                                 </a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="<?= SITE_URL ?>/pages/saved_teas.php">
+                                    <i class="bi bi-bookmark-heart me-2" aria-hidden="true"></i>My Saved Teas
+                                </a>
+                            </li>
                         <?php if (isAdmin()): ?>
 
                         <li><hr class="dropdown-divider"></li>
