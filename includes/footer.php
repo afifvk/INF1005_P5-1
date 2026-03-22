@@ -15,7 +15,7 @@
                     <i class="bi bi-bag-heart-fill me-1" aria-hidden="true"></i>
                     <?= SITE_NAME ?>
                 </h2>
-                <p class="text-muted small">Quality products crafted for modern living. Shop with confidence.</p>
+                <p class="text-muted small">Quality tea blends. Shop with confidence.</p>
             </div>
 
             <div class="col-md-4">

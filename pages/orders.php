@@ -121,10 +121,10 @@ $orders = getUserOrders($userId);
                             <div class="flex-grow-1">
                                 <p class="mb-0 fw-semibold"><?= e($item['name']) ?></p>
                                 <p class="mb-0 text-muted small">
-                                    £<?= number_format($item['unit_price'], 2) ?> × <?= (int)$item['quantity'] ?>
+                                    $<?= number_format($item['unit_price'], 2) ?> × <?= (int)$item['quantity'] ?>
                                 </p>
                             </div>
-                            <p class="mb-0 fw-bold">£<?= number_format($item['subtotal'], 2) ?></p>
+                            <p class="mb-0 fw-bold">$<?= number_format($item['subtotal'], 2) ?></p>
                         </div>
                         <?php endforeach; ?>
                     </div>
@@ -138,7 +138,7 @@ $orders = getUserOrders($userId);
                         </div>
                         <div class="text-end">
                             <p class="mb-0 text-muted small">Order Total</p>
-                            <p class="mb-0 fw-bold fs-5">£<?= number_format($order['total_cost'], 2) ?></p>
+                            <p class="mb-0 fw-bold fs-5">$<?= number_format($order['total_cost'], 2) ?></p>
                         </div>
                     </div>
 

@@ -17,8 +17,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </p>
                 <h1 id="about-heading" class="mb-3">Built Around Quality &amp; Trust</h1>
                 <p class="lead text-muted">
-                    We started <?= SITE_NAME ?> with a simple belief: everyone deserves products
-                    that are genuinely good — designed well, built to last, and priced fairly.
+                    We started <?= SITE_NAME ?> with a simple belief: everyone deserves quality tea at a fair price. Sourced from trusted growers in Japan and China, our products are handpicked for flavor and freshness. We’re not just selling tea — we’re sharing a passion for the perfect cup.
                 </p>
                 <a href="products.php" class="btn-store mt-2 d-inline-block">
                     Explore Products
@@ -105,14 +104,15 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="row g-4 justify-content-center">
             <?php
             $team = [
-                ['name' => 'Alex Rivera',   'role' => 'Founder & CEO',           'icon' => 'person-badge'],
-                ['name' => 'Jordan Kim',    'role' => 'Head of Product',          'icon' => 'box-seam'],
-                ['name' => 'Sam Okafor',    'role' => 'Lead Developer',           'icon' => 'code-slash'],
-                ['name' => 'Morgan Blake',  'role' => 'Customer Experience Lead', 'icon' => 'headset'],
+                ['name' => 'Afiqah',   'role' => 'Developer 1',           'icon' => 'person-badge'],
+                ['name' => 'Jerome',    'role' => 'Developer 2',          'icon' => 'person-badge'],
+                ['name' => 'Joel',    'role' => 'Developer 3',           'icon' => 'person-badge'],
+                ['name' => 'Wei Sheng',  'role' => 'Developer 4', 'icon' => 'person-badge'],
+                ['name' => 'Yong Quan',  'role' => 'Developer 5', 'icon' => 'person-badge']
             ];
             foreach ($team as $member):
             ?>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md">
                 <div class="text-center p-3">
                     <div class="value-icon mx-auto mb-3" style="width:64px;height:64px;font-size:1.75rem;"
                          aria-hidden="true">

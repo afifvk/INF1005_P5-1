@@ -61,10 +61,10 @@ if (!$order) {
                 <div class="flex-grow-1">
                     <p class="mb-0 fw-semibold"><?= e($item['name']) ?></p>
                     <p class="mb-0 text-muted small">
-                        £<?= number_format($item['unit_price'], 2) ?> × <?= (int)$item['quantity'] ?>
+                        $<?= number_format($item['unit_price'], 2) ?> × <?= (int)$item['quantity'] ?>
                     </p>
                 </div>
-                <p class="mb-0 fw-bold">£<?= number_format($item['subtotal'], 2) ?></p>
+                <p class="mb-0 fw-bold">$<?= number_format($item['subtotal'], 2) ?></p>
             </div>
             <?php endforeach; ?>
         </div>
@@ -77,7 +77,7 @@ if (!$order) {
                     $itemsTotal = array_sum(array_column($order['items'], 'subtotal'));
                     $shipping   = $order['total_cost'] - $itemsTotal;
                 ?>
-                <span>£<?= number_format($itemsTotal, 2) ?></span>
+                <span>$<?= number_format($itemsTotal, 2) ?></span>
             </div>
             <div class="d-flex justify-content-between mb-3">
                 <span class="text-muted">Shipping</span>
@@ -85,14 +85,14 @@ if (!$order) {
                     <?php if ($shipping <= 0): ?>
                         <span class="text-success">Free</span>
                     <?php else: ?>
-                        £<?= number_format($shipping, 2) ?>
+                        $<?= number_format($shipping, 2) ?>
                     <?php endif; ?>
                 </span>
             </div>
             <hr class="my-2">
             <div class="d-flex justify-content-between fw-bold fs-5">
                 <span>Total</span>
-                <span>£<?= number_format($order['total_cost'], 2) ?></span>
+                <span>$<?= number_format($order['total_cost'], 2) ?></span>
             </div>
         </div>
 

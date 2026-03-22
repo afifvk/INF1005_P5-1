@@ -74,7 +74,7 @@ if (empty($products)): ?>
                         <?php endif; ?>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-auto pt-2 flex-wrap gap-2">
-                        <span class="product-price">£<?= number_format($product['price'], 2) ?></span>
+                        <span class="product-price">$<?= number_format($product['price'], 2) ?></span>
                         <div class="d-flex gap-2">
                             <a href="product_detail.php?id=<?= (int)$product['id'] ?>" class="btn-store-outline btn-sm">Details</a>
                             <?php if (isLoggedIn() && $product['stock'] > 0): ?>

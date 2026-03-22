@@ -73,8 +73,8 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
 
                 <!-- Price -->
-                <p class="product-detail-price" aria-label="Price: £<?= number_format($product['price'], 2) ?>">
-                    £<?= number_format($product['price'], 2) ?>
+                <p class="product-detail-price" aria-label="Price: $<?= number_format($product['price'], 2) ?>">
+                    $<?= number_format($product['price'], 2) ?>
                 </p>
 
                 <hr class="divider-line">
@@ -137,7 +137,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- Trust badges -->
                 <div class="d-flex gap-4 flex-wrap text-muted small">
-                    <span><i class="bi bi-truck me-1" aria-hidden="true"></i>Free shipping over £50</span>
+                    <span><i class="bi bi-truck me-1" aria-hidden="true"></i>Free shipping over $50</span>
                     <span><i class="bi bi-arrow-return-left me-1" aria-hidden="true"></i>30-day returns</span>
                     <span><i class="bi bi-shield-check me-1" aria-hidden="true"></i>Secure payment</span>
                 </div>

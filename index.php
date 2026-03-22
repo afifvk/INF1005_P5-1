@@ -18,11 +18,10 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
             <div class="col-lg-6">
                 <p class="hero-eyebrow">Welcome to</p>
                 <h1 class="hero-title" id="hero-heading">
-                    The Modern<br><span>Store.</span>
+                    The Tea<br><span>Store.</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Curated products crafted for quality and style.
-                    Shop our collection and discover what sets us apart.
+                    Curated tea leaves. Crafted blends. Delivered to your door.
                 </p>
                 <div class="d-flex gap-3 flex-wrap">
                     <a href="/pages/products.php" class="btn-store">
@@ -63,7 +62,7 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
                     <span class="feature-icon"><i class="bi bi-truck" aria-hidden="true"></i></span>
                     <div>
                         <div class="feature-text-label">Free Shipping</div>
-                        <div class="feature-text-sub">On orders over £50</div>
+                        <div class="feature-text-sub">On orders over $50</div>
                     </div>
                 </div>
             </div>
@@ -280,7 +279,7 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
                         <h3 class="product-name"><?= e($product['name']) ?></h3>
                         <p class="product-desc"><?= e(substr($product['description'], 0, 100)) ?>…</p>
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                            <span class="product-price">£<?= number_format($product['price'], 2) ?></span>
+                            <span class="product-price">$<?= number_format($product['price'], 2) ?></span>
                             <div class="d-flex gap-2">
                                 <a href="/pages/product_detail.php?id=<?= (int)$product['id'] ?>"
                                    class="btn-store-outline btn-sm">View</a>

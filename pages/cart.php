@@ -91,7 +91,7 @@ $user   = getUserById($userId);
                         <div class="flex-grow-1">
                             <p class="cart-item-name mb-1"><?= e($item['name']) ?></p>
                             <p class="text-muted small mb-0">
-                                Unit price: £<?= number_format($item['price'], 2) ?>
+                                Unit price: $<?= number_format($item['price'], 2) ?>
                             </p>
                         </div>
 
@@ -118,8 +118,8 @@ $user   = getUserById($userId);
                         </form>
 
                         <!-- Line Total -->
-                        <p class="fw-bold text-nowrap mb-0" aria-label="Line total: £<?= number_format($item['price'] * $item['quantity'], 2) ?>">
-                            £<?= number_format($item['price'] * $item['quantity'], 2) ?>
+                        <p class="fw-bold text-nowrap mb-0" aria-label="Line total: $<?= number_format($item['price'] * $item['quantity'], 2) ?>">
+                            $<?= number_format($item['price'] * $item['quantity'], 2) ?>
                         </p>
 
                         <!-- Remove Button -->
@@ -165,7 +165,7 @@ $user   = getUserById($userId);
                         <tbody>
                             <tr>
                                 <td class="text-muted ps-0">Subtotal</td>
-                                <td class="text-end fw-semibold">£<?= number_format($total, 2) ?></td>
+                                <td class="text-end fw-semibold">$<?= number_format($total, 2) ?></td>
                             </tr>
                             <tr>
                                 <td class="text-muted ps-0">Shipping</td>
@@ -173,7 +173,7 @@ $user   = getUserById($userId);
                                     <?php if ($total >= 50): ?>
                                         <span class="text-success">Free</span>
                                     <?php else: ?>
-                                        £3.99
+                                        $3.99
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -185,14 +185,14 @@ $user   = getUserById($userId);
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="fw-bold">Total</span>
                         <span class="cart-total-amount">
-                            £<?= number_format($total >= 50 ? $total : $total + 3.99, 2) ?>
+                            $<?= number_format($total >= 50 ? $total : $total + 3.99, 2) ?>
                         </span>
                     </div>
 
                     <?php if ($total < 50): ?>
                     <p class="small text-muted mb-3">
                         <i class="bi bi-truck me-1" aria-hidden="true"></i>
-                        Add £<?= number_format(50 - $total, 2) ?> more for free shipping.
+                        Add $<?= number_format(50 - $total, 2) ?> more for free shipping.
                     </p>
                     <?php endif; ?>
 
