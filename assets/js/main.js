@@ -233,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var quizSection = document.getElementById('quiz-section');
     var quizForm = document.getElementById('personalitea-quiz');
     var quizResults = document.getElementById('quiz-results');
+    var quizResultsPanel = quizResults ? quizResults.closest('.quiz-panel') : null;
     var quizCancel = document.getElementById('quiz-cancel');
     var APP = window.__APP__ || { isLoggedIn: false, csrfToken: '' };
 
@@ -282,6 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
             animateShow(quizForm, function(){ quizForm.setAttribute('aria-hidden', 'false'); });
         }
         if (quizResults) quizResults.style.display = 'none';
+        if (quizResultsPanel) {
+            quizResultsPanel.classList.remove('is-active');
+            quizResultsPanel.style.flex = '';
+            quizResultsPanel.style.width = '';
+        }
         // focus first input for accessibility
         try {
             var firstInput = quizForm && quizForm.querySelector('input[type="radio"], input[type="text"], select, textarea');
@@ -296,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
             try { quizForm.reset(); } catch (e) {}
         }
         if (quizResults) quizResults.style.display = 'none';
+        if (quizResultsPanel) quizResultsPanel.classList.remove('is-active');
     }
 
     if (startBtn) startBtn.addEventListener('click', function() { showQuiz(); });
@@ -352,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Render results. Include a link to browse full catalog.
             if (quizResults) {
                 quizResults.style.display = '';
+                if (quizResultsPanel) quizResultsPanel.classList.add('is-active');
                 var html = '<div class="form-wrapper">'
                     + '<h3>Your Personalitea: ' + personality + '</h3>'
                     + '<p>Based on your answers, we suggest the following:</p>'

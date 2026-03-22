@@ -101,7 +101,7 @@ $featuredProducts = array_slice(getAllProducts(), 0, 3);
 <section id="quiz-section" class="section-pad" aria-labelledby="quiz-heading">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-8">
+            <div class="col-12">
                 <div class="quiz-panel-wrapper">
                     <div class="quiz-panel quiz-panel-form">
                         <form id="personalitea-quiz" class="form-wrapper" aria-describedby="quiz-desc" style="display:none;" aria-hidden="true">
