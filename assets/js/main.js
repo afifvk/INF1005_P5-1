@@ -457,8 +457,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!APP.isLoggedIn) {
                     html += '<div class="mt-3 text-center small text-muted">'
                         + '<p>Login to save your personalised tea recommendations so they are remembered.</p>'
-                        + '<a href="/pages/login.php" class="btn-store-outline me-2">Login to save</a>'
+                        + '<div class="quiz-auth-actions">'
+                        + '<a href="/pages/login.php" class="btn-store-outline">Login to save</a>'
                         + '<button id="skip-save" class="btn-store">Skip for now</button>'
+                        + '</div>'
                         + '</div>';
                 }
 

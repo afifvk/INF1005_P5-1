@@ -805,14 +805,14 @@ img {
 
 #quiz-section .quiz-panel.quiz-panel-results.is-active {
     display: flex;
-    width: min(100%, 760px);
-    flex: 1 1 760px;
-    max-width: 760px;
+    width: min(100%, 940px);
+    flex: 1 1 940px;
+    max-width: 940px;
 }
 
 #quiz-section .quiz-panel .form-wrapper,
 #quiz-section #quiz-results .form-wrapper {
-    min-height: 520px;
+    min-height: 620px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -821,8 +821,18 @@ img {
 
 #quiz-section .quiz-panel .form-wrapper .d-flex { margin-top: 0.5rem; }
 
-#quiz-section #quiz-results .row { justify-content: center; }
-#quiz-section #quiz-results .value-card { margin: 0.5rem auto; max-width: 220px; }
+#quiz-section #quiz-results .row { justify-content: center; row-gap: 1rem; }
+#quiz-section #quiz-results .value-card { margin: 0.5rem auto; width: 100%; max-width: 320px; }
+
+#quiz-section #quiz-results .value-card .btn-store,
+#quiz-section #quiz-results .value-card .btn-store-outline {
+    display: block;
+    width: 100%;
+    margin-top: 0.6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: center;
+}
 
 @media (max-width: 1200px) {
     #quiz-section .quiz-panel { width: 380px; flex: 0 0 380px; }
@@ -943,6 +953,38 @@ img {
     box-sizing: border-box;
     white-space: normal;
     word-break: break-word;
+}
+
+#quiz-section #quiz-results .quiz-auth-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 0.7rem;
+    width: min(100%, 420px);
+    margin: 0.75rem auto 0;
+}
+
+#quiz-section #quiz-results .quiz-auth-actions .btn-store,
+#quiz-section #quiz-results .quiz-auth-actions .btn-store-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 0;
+    padding: 0.65rem 1rem;
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    #quiz-section #quiz-results .quiz-auth-actions {
+        grid-template-columns: 1fr;
+        width: min(100%, 280px);
+    }
+
+    #quiz-section #quiz-results .quiz-auth-actions .btn-store,
+    #quiz-section #quiz-results .quiz-auth-actions .btn-store-outline {
+        width: 100%;
+    }
 }
 
 @media (max-width: 992px) {
