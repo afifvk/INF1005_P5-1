@@ -25,31 +25,24 @@ function getAllUsers() {
     return $stmt->fetchAll();
 }
 
-function updateUserProfile($id, $firstName, $lastName, $email, $address, $newPassword = '') {
+function updateUserProfile($id, $firstName, $lastName, $address, $newPassword = '') {
     $pdo = getDB();
-
-    // Check email not taken by another user
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-    $stmt->execute([$email, $id]);
-    if ($stmt->fetch()) {
-        return "That email is already used by another account.";
-    }
 
     if (!empty($newPassword)) {
         $hash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
         $stmt = $pdo->prepare("
             UPDATE users
-            SET first_name=?, last_name=?, email=?, address=?, password=?
+            SET first_name=?, last_name=?, address=?, password=?
             WHERE id=?
         ");
-        $stmt->execute([$firstName, $lastName, $email, $address, $hash, $id]);
+        $stmt->execute([$firstName, $lastName, $address, $hash, $id]);
     } else {
         $stmt = $pdo->prepare("
             UPDATE users
-            SET first_name=?, last_name=?, email=?, address=?
+            SET first_name=?, last_name=?, address=?
             WHERE id=?
         ");
-        $stmt->execute([$firstName, $lastName, $email, $address, $id]);
+        $stmt->execute([$firstName, $lastName, $address, $id]);
     }
 
     return true;
@@ -65,21 +58,23 @@ function deleteUser($id) {
  * Validate profile update.
  * firstName is optional, lastName is required.
  */
-function validateProfileUpdate($firstName, $lastName, $email, $newPassword, $confirmPassword) {
+function validateProfileUpdate($firstName, $lastName, $newPassword, $confirmPassword) {
     $errors = [];
 
-    // First name optional — only validate length if provided
-    if (!empty($firstName) && strlen($firstName) > 80) {
+    // First name — required
+    if (empty($firstName)) {
+        $errors[] = 'First name is required.';
+    } elseif (strlen($firstName) > 80) {
         $errors[] = 'First name must be under 80 characters.';
     }
 
+    // Last name — required
     if (empty($lastName)) {
         $errors[] = 'Last name is required.';
+    } elseif (strlen($lastName) > 80) {
+        $errors[] = 'Last name must be under 80 characters.';
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Enter a valid email address.';
-    }
 
     if (!empty($newPassword)) {
         if (strlen($newPassword) < 10)                      $errors[] = 'New password must be at least 10 characters.';

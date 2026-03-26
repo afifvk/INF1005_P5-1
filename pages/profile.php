@@ -36,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lastName  = trim(isset($_POST['last_name'])       ? $_POST['last_name']        : '');
             $address   = trim(isset($_POST['address'])         ? $_POST['address']          : '');
             $currentUser = getUserById($userId);
-            $email = $currentUser['email'];
+            
             $newPass   = isset($_POST['new_password'])         ? $_POST['new_password']     : '';
             $confirmP  = isset($_POST['confirm_password'])     ? $_POST['confirm_password'] : '';
 
-            $errors = validateProfileUpdate($firstName, $lastName, $email, $newPass, $confirmP);
+            $errors = validateProfileUpdate($firstName, $lastName, $newPass, $confirmP);
 
             if (empty($errors)) {
-                $result = updateUserProfile($userId, $firstName, $lastName, $email, $address, $newPass);
+                $result = updateUserProfile($userId, $firstName, $lastName, $address, $newPass);
                 if ($result === true) {
                     $_SESSION['first_name'] = $firstName;
                     $_SESSION['last_name']  = $lastName;
@@ -124,7 +124,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                         <input type="hidden" name="action" value="update">
 
-                        <!-- First (optional) + Last (required) -->
+                        <!-- First (required) + Last (required) -->
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
                                 <label for="first_name" class="form-label">
@@ -134,7 +134,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
                                        class="form-control"
                                        value="<?= e($user['first_name'] ?? '') ?>"
                                        maxlength="80"
-                                       placeholder="required">
+                                       required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="last_name" class="form-label">

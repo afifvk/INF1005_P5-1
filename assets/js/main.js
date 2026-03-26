@@ -541,7 +541,27 @@ document.addEventListener('DOMContentLoaded', function() {
         var chatbotInput = document.getElementById('chatbot-input');
         var chatbotMessages = document.getElementById('chatbot-messages');
         var chatbotSend = document.getElementById('chatbot-send');
-        var chatHistory = [];
+
+        // ── sessionStorage helpers ───────────────────────────
+        var CHAT_STORAGE_KEY = 'teabot_history';
+
+        function loadChatHistory() {
+            try {
+                var raw = sessionStorage.getItem(CHAT_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveChatHistory() {
+            try {
+                sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatHistory));
+            } catch (e) {}
+        }
+
+        // Load persisted history on page load
+        var chatHistory = loadChatHistory();
 
         function appendChatMessage(text, role) {
             if (!chatbotMessages) return;
@@ -550,6 +570,14 @@ document.addEventListener('DOMContentLoaded', function() {
             msg.textContent = text;
             chatbotMessages.appendChild(msg);
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Restore previous messages into the UI if history exists
+        if (chatHistory.length > 0 && chatbotMessages) {
+            chatbotMessages.innerHTML = ''; // clear default greeting
+            chatHistory.forEach(function(item) {
+                appendChatMessage(item.text, item.role === 'model' ? 'bot' : 'user');
+            });
         }
 
         function setChatOpen(open) {
@@ -587,6 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 appendChatMessage(message, 'user');
                 chatHistory.push({ role: 'user', text: message });
+                saveChatHistory();
                 if (chatbotInput) chatbotInput.value = '';
                 if (chatbotSend) chatbotSend.disabled = true;
 
@@ -613,6 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (data && data.success && data.reply) {
                             appendChatMessage(data.reply, 'bot');
                             chatHistory.push({ role: 'model', text: data.reply });
+                            saveChatHistory();
                         } else {
                             appendChatMessage((data && data.message) || 'Sorry, the chatbot is unavailable right now.', 'bot');
                         }
