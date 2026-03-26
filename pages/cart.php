@@ -26,7 +26,7 @@ $user   = getUserById($userId);
     
     <div class="container">
         <!-- Shipping Address Banner -->
-        <div class="mb-4 p-3 rounded border" aria-label="Shipping address">
+        <div class="mb-4 p-3 rounded border">
             <p class="text-muted small text-uppercase fw-semibold mb-1">
                 <i class="bi bi-truck me-1" aria-hidden="true"></i> Shipping Address
             </p>
@@ -118,8 +118,8 @@ $user   = getUserById($userId);
                         </form>
 
                         <!-- Line Total -->
-                        <p class="fw-bold text-nowrap mb-0" aria-label="Line total: $<?= number_format($item['price'] * $item['quantity'], 2) ?>">
-                            $<?= number_format($item['price'] * $item['quantity'], 2) ?>
+                        <p class="fw-bold text-nowrap mb-0">
+                            Line total: $<?= number_format($item['price'] * $item['quantity'], 2) ?>
                         </p>
 
                         <!-- Remove Button -->
@@ -157,7 +157,7 @@ $user   = getUserById($userId);
 
             <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="cart-total-box" aria-label="Order summary">
+                <section class="cart-total-box" aria-label="Order summary">
                     <h2 class="h5 mb-3">Order Summary</h2>
                     <hr class="divider-line my-2">
 
@@ -200,7 +200,7 @@ $user   = getUserById($userId);
                     <?php if (empty($user['address'])): ?>
                         <p class="small text-danger mb-2">
                             <i class="bi bi-exclamation-circle me-1"></i>
-                            Please <a href="profile.php">add a shipping address</a> before checking out.
+                            Please <a href="profile.php" class="text-decoration-underline">add a shipping address</a> before checking out.
                         </p>
                         <button class="btn-gold w-100 py-3 rounded" disabled>
                             <i class="bi bi-lock me-1" aria-hidden="true"></i>
@@ -225,7 +225,7 @@ $user   = getUserById($userId);
                             Continue shopping
                         </a>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
         <?php endif; ?>

@@ -44,7 +44,8 @@ $quizCatalog = array_map(static function ($p) {
                 <div class="hero-image-block">
                     <div class="quiz-side-box quiz-full" aria-hidden="false">
                         <div class="quiz-side-inner">
-                            <h3>Create Your Personalitea</h3>
+                            <!-- FIX: was h3 (skipped h2 level after h1); changed to h2 -->
+                            <h2>Create Your Personalitea</h2>
                             <p>Take our 4-question quiz to discover the tea that fits you.</p>
                             <button id="start-quiz-btn" class="btn-store btn-quiz-cta">Create your own personalitea</button>
                         </div>
@@ -107,7 +108,7 @@ $quizCatalog = array_map(static function ($p) {
     </div>
 </section>
 
-<!-- FEATURED PRODUCTS -->
+<!-- QUIZ SECTION -->
 <section id="quiz-section" class="section-pad" aria-labelledby="quiz-heading">
     <div class="container">
         <div class="row justify-content-center">
@@ -115,30 +116,32 @@ $quizCatalog = array_map(static function ($p) {
                 <div class="quiz-panel-wrapper">
                     <div class="quiz-panel quiz-panel-form">
                         <form id="personalitea-quiz" class="form-wrapper" aria-describedby="quiz-desc" style="display:none;" aria-hidden="true">
-                            <h3 id="quiz-heading">Create Your Personalitea</h3>
+                            <h2 id="quiz-heading">Create Your Personalitea</h2>
                             <div id="quiz-desc" class="visually-hidden">This form is a demo quiz that maps answers to suggested products.</div>
 
                             <div class="quiz-questions">
                             <fieldset class="mb-3 quiz-question">
-                                <legend class="form-label">1) How do you like your flavour profile?</legend>
+                                <!-- FIX: added id="q1-legend" to match aria-labelledby on the radiogroup below -->
+                                <legend class="form-label" id="q1-legend">1) How do you like your flavour profile?</legend>
                                 <div class="quiz-options" role="radiogroup" aria-labelledby="q1-legend">
                                     <label class="quiz-option" data-value="light">
                                         <input type="radio" name="q1" value="light" required>
                                         <img class="opt-img" src="/assets/images/lightandfloral.png" alt="Light & floral">
-                                        <div class="opt-label">Light &amp; floral</div>
-                                        <div class="opt-sub">Delicate, floral notes</div>
+                                        <!-- FIX: div not allowed inside label; replaced with span -->
+                                        <span class="opt-label">Light &amp; floral</span>
+                                        <span class="opt-sub">Delicate, floral notes</span>
                                     </label>
                                     <label class="quiz-option" data-value="earthy">
                                         <input type="radio" name="q1" value="earthy">
                                         <img class="opt-img" src="/assets/images/earthyandrobust.png" alt="Earthy & robust">
-                                        <div class="opt-label">Earthy &amp; robust</div>
-                                        <div class="opt-sub">Deep, grounded flavours</div>
+                                        <span class="opt-label">Earthy &amp; robust</span>
+                                        <span class="opt-sub">Deep, grounded flavours</span>
                                     </label>
                                     <label class="quiz-option" data-value="sweet">
                                         <input type="radio" name="q1" value="sweet">
                                         <img class="opt-img" src="/assets/images/sweetandromantic.png" alt="Sweet & aromatic">
-                                        <div class="opt-label">Sweet &amp; aromatic</div>
-                                        <div class="opt-sub">Warm, fragrant notes</div>
+                                        <span class="opt-label">Sweet &amp; aromatic</span>
+                                        <span class="opt-sub">Warm, fragrant notes</span>
                                     </label>
                                 </div>
                             </fieldset>
@@ -149,20 +152,20 @@ $quizCatalog = array_map(static function ($p) {
                                     <label class="quiz-option" data-value="morning">
                                         <input type="radio" name="q2" value="morning" required>
                                         <img class="opt-img" src="/assets/images/morningboost.png" alt="Morning boost">
-                                        <div class="opt-label">Morning boost</div>
-                                        <div class="opt-sub">Energising and bright</div>
+                                        <span class="opt-label">Morning boost</span>
+                                        <span class="opt-sub">Energising and bright</span>
                                     </label>
                                     <label class="quiz-option" data-value="afternoon">
                                         <input type="radio" name="q2" value="afternoon">
                                         <img class="opt-img" src="/assets/images/afternooncalm.png" alt="Afternoon calm">
-                                        <div class="opt-label">Afternoon calm</div>
-                                        <div class="opt-sub">Light and soothing</div>
+                                        <span class="opt-label">Afternoon calm</span>
+                                        <span class="opt-sub">Light and soothing</span>
                                     </label>
                                     <label class="quiz-option" data-value="evening">
                                         <input type="radio" name="q2" value="evening">
                                         <img class="opt-img" src="/assets/images/eveningrelaxation.png" alt="Evening relaxation">
-                                        <div class="opt-label">Evening relaxation</div>
-                                        <div class="opt-sub">Calming, low caffeine</div>
+                                        <span class="opt-label">Evening relaxation</span>
+                                        <span class="opt-sub">Calming, low caffeine</span>
                                     </label>
                                 </div>
                             </fieldset>
@@ -173,20 +176,20 @@ $quizCatalog = array_map(static function ($p) {
                                     <label class="quiz-option" data-value="adventurous">
                                         <input type="radio" name="q3" value="adventurous" required>
                                         <img class="opt-img" src="/assets/images/adventurous.png" alt="Adventurous">
-                                        <div class="opt-label">Adventurous</div>
-                                        <div class="opt-sub">Try bold blends</div>
+                                        <span class="opt-label">Adventurous</span>
+                                        <span class="opt-sub">Try bold blends</span>
                                     </label>
                                     <label class="quiz-option" data-value="cozy">
                                         <input type="radio" name="q3" value="cozy">
                                         <img class="opt-img" src="/assets/images/cozy.png" alt="Cozy">
-                                        <div class="opt-label">Cozy</div>
-                                        <div class="opt-sub">Comforting and warm</div>
+                                        <span class="opt-label">Cozy</span>
+                                        <span class="opt-sub">Comforting and warm</span>
                                     </label>
                                     <label class="quiz-option" data-value="focused">
                                         <input type="radio" name="q3" value="focused">
                                         <img class="opt-img" src="/assets/images/focused.png" alt="Focused">
-                                        <div class="opt-label">Focused</div>
-                                        <div class="opt-sub">Crisp and clear</div>
+                                        <span class="opt-label">Focused</span>
+                                        <span class="opt-sub">Crisp and clear</span>
                                     </label>
                                 </div>
                             </fieldset>
@@ -197,20 +200,20 @@ $quizCatalog = array_map(static function ($p) {
                                     <label class="quiz-option" data-value="citrus">
                                         <input type="radio" name="q4" value="citrus" required>
                                         <img class="opt-img" src="/assets/images/citrus.png" alt="Citrus">
-                                        <div class="opt-label">Citrus</div>
-                                        <div class="opt-sub">Zesty, uplifting</div>
+                                        <span class="opt-label">Citrus</span>
+                                        <span class="opt-sub">Zesty, uplifting</span>
                                     </label>
                                     <label class="quiz-option" data-value="vanilla">
                                         <input type="radio" name="q4" value="vanilla">
                                         <img class="opt-img" src="/assets/images/vanilla.png" alt="Vanilla">
-                                        <div class="opt-label">Vanilla</div>
-                                        <div class="opt-sub">Creamy, smooth</div>
+                                        <span class="opt-label">Vanilla</span>
+                                        <span class="opt-sub">Creamy, smooth</span>
                                     </label>
                                     <label class="quiz-option" data-value="smoky">
                                         <input type="radio" name="q4" value="smoky">
                                         <img class="opt-img" src="/assets/images/smoky.png" alt="Smoky">
-                                        <div class="opt-label">Smoky</div>
-                                        <div class="opt-sub">Rich, toasted notes</div>
+                                        <span class="opt-label">Smoky</span>
+                                        <span class="opt-sub">Rich, toasted notes</span>
                                     </label>
                                 </div>
                             </fieldset>
@@ -267,6 +270,8 @@ $quizCatalog = array_map(static function ($p) {
     document.addEventListener('DOMContentLoaded', ()=> initQuizCards(document));
 })();
 </script>
+
+<!-- FEATURED PRODUCTS -->
 <section class="section-pad" aria-labelledby="products-heading">
     <div class="container">
         <div class="section-header">
@@ -336,21 +341,22 @@ $quizCatalog = array_map(static function ($p) {
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="testimonial-card">
-                    <div class="testimonial-stars" aria-label="5 stars">★★★★★</div>
+                    <!-- FIX: aria-label on a generic div is invalid; added role="img" -->
+                    <div class="testimonial-stars" role="img" aria-label="5 stars">★★★★★</div>
                     <p class="testimonial-quote">"Absolutely love the quality. Fast shipping and great packaging."</p>
                     <p class="testimonial-author">— Sarah M.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="testimonial-card">
-                    <div class="testimonial-stars" aria-label="5 stars">★★★★★</div>
+                    <div class="testimonial-stars" role="img" aria-label="5 stars">★★★★★</div>
                     <p class="testimonial-quote">"Best purchase I've made this year. Arrived ahead of schedule."</p>
                     <p class="testimonial-author">— James T.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="testimonial-card">
-                    <div class="testimonial-stars" aria-label="4 stars">★★★★☆</div>
+                    <div class="testimonial-stars" role="img" aria-label="4 stars">★★★★☆</div>
                     <p class="testimonial-quote">"Great value for money. Customer support was very responsive."</p>
                     <p class="testimonial-author">— Priya K.</p>
                 </div>

@@ -297,7 +297,7 @@ img {
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-highlight);
+    color: #8c6d30; /* A darker gold/bronze that passes WCAG AA */
     margin-bottom: 0.75rem;
 }
 
