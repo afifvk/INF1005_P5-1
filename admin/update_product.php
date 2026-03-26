@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 session_start();
 
@@ -24,9 +22,26 @@ $price = isset($_POST['price']) ? (float)$_POST['price'] : -1;
 $stock = isset($_POST['stock']) ? (int)$_POST['stock'] : -1;
 $returnTo = trim((string)($_POST['return_to'] ?? ''));
 $redirectUrl = 'inventory.php' . ($returnTo !== '' ? '?' . $returnTo : '');
+$uploadHelpersPath = __DIR__ . '/../includes/upload_helpers.php';
 
 if ($id <= 0 || $name === '' || $description === '' || $price < 0 || $stock < 0) {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Invalid product data.'];
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
+if (!is_file($uploadHelpersPath)) {
+    error_log('Admin update product upload failed: missing upload helper at ' . $uploadHelpersPath);
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Image upload support is not available on the server.'];
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
+require_once $uploadHelpersPath;
+
+if (!function_exists('storeUploadedProductImage')) {
+    error_log('Admin update product upload failed: upload helper did not load correctly.');
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Image upload support is not available on the server.'];
     header('Location: ' . $redirectUrl);
     exit;
 }
@@ -37,37 +52,34 @@ $imageUploaded = isset($_FILES['image'])
     && $_FILES['image']['size'] > 0;
 
 if ($imageUploaded) {
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $fileType = mime_content_type($_FILES['image']['tmp_name']);
+    $uploadDir = __DIR__ . '/../assets/images';
+    $imageName = null;
 
-    if (!in_array($fileType, $allowedTypes, true)) {
-        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Invalid image type. Allowed: JPG, PNG, GIF, WEBP.'];
+    try {
+        $imageName = storeUploadedProductImage($_FILES['image'], $uploadDir);
+
+        $stmt = $pdo->prepare('
+            UPDATE products
+            SET name = ?, description = ?, price = ?, stock = ?, image = ?
+            WHERE id = ?
+        ');
+        $stmt->execute([$name, $description, $price, $stock, $imageName, $id]);
+    } catch (Throwable $e) {
+        if ($imageName !== null) {
+            $uploadedImagePath = $uploadDir . DIRECTORY_SEPARATOR . $imageName;
+            if (is_file($uploadedImagePath)) {
+                @unlink($uploadedImagePath);
+            }
+        }
+
+        error_log('Admin update product upload failed: ' . $e->getMessage());
+        $_SESSION['flash'] = [
+            'type' => 'danger',
+            'message' => $e instanceof RuntimeException ? $e->getMessage() : 'Unable to update the product right now.',
+        ];
         header('Location: ' . $redirectUrl);
         exit;
     }
-
-    $imageName = basename((string)$_FILES['image']['name']);
-    $uploadDir = __DIR__ . '/../assets/images/';
-
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
-
-    $uploadPath = $uploadDir . $imageName;
-
-    if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Failed to upload image.'];
-        header('Location: ' . $redirectUrl);
-        exit;
-    }
-
-    // Update all fields including image
-    $stmt = $pdo->prepare('
-        UPDATE products
-        SET name = ?, description = ?, price = ?, stock = ?, image = ?
-        WHERE id = ?
-    ');
-    $stmt->execute([$name, $description, $price, $stock, $imageName, $id]);
 } else {
     // Update without changing image
     $stmt = $pdo->prepare('

@@ -311,7 +311,8 @@ require_once __DIR__ . '/../includes/header.php';
 
                     <div class="col-12">
                         <label class="form-label">Product Image</label>
-                        <input type="file" name="image" accept="image/*" class="form-control" required>
+                        <input type="file" name="image" accept="image/jpeg,image/png" class="form-control" required>
+                        <div class="form-text">Accepted formats: JPG and PNG. Max size: 5 MB.</div>
                     </div>
 
                     <div class="col-12 d-flex justify-content-end gap-2 mt-2">
@@ -369,11 +370,11 @@ require_once __DIR__ . '/../includes/header.php';
                         <input type="file"
                                id="changeImageFile"
                                name="image"
-                               accept="image/*"
+                               accept="image/jpeg,image/png"
                                class="form-control"
                                required
                                onchange="if(this.files[0]){document.getElementById('changeImagePreview').src=URL.createObjectURL(this.files[0])}">
-                        <div class="form-text">Accepted formats: JPG, PNG, GIF, WEBP</div>
+                        <div class="form-text">Accepted formats: JPG and PNG. Max size: 5 MB.</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -403,4 +404,5 @@ function openChangeImageModal(productId, productName, currentImgSrc) {
 }
 </script>
 
+<?php require_once __DIR__ . '/accessibility_landmarks.php'; ?>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

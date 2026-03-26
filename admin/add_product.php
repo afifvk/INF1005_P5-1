@@ -20,28 +20,66 @@ $price = isset($_POST['price']) ? (float)$_POST['price'] : -1;
 $stock = isset($_POST['stock']) ? (int)$_POST['stock'] : -1;
 $returnTo = trim((string)($_POST['return_to'] ?? ''));
 $redirectUrl = 'inventory.php' . ($returnTo !== '' ? '?' . $returnTo : '');
+$uploadHelpersPath = __DIR__ . '/../includes/upload_helpers.php';
 
 if ($name === '' || $description === '' || $price < 0 || $stock < 0) {
-    die('Invalid product data.');
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Invalid product data.'];
+    header('Location: ' . $redirectUrl);
+    exit;
 }
 
-if (!isset($_FILES['image']) || ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-    die('Please upload a product image.');
+if (!is_file($uploadHelpersPath)) {
+    error_log('Admin add product upload failed: missing upload helper at ' . $uploadHelpersPath);
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Image upload support is not available on the server.'];
+    header('Location: ' . $redirectUrl);
+    exit;
 }
 
-$imageName = basename((string)$_FILES['image']['name']);
-$uploadPath = __DIR__ . '/../assets/images/' . $imageName;
+require_once $uploadHelpersPath;
 
-if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-    die('Failed to upload image.');
+if (!function_exists('storeUploadedProductImage')) {
+    error_log('Admin add product upload failed: upload helper did not load correctly.');
+    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Image upload support is not available on the server.'];
+    header('Location: ' . $redirectUrl);
+    exit;
 }
 
-$stmt = $pdo->prepare('
-    INSERT INTO products (name, description, price, stock, image)
-    VALUES (?, ?, ?, ?, ?)
-');
+if (!isset($_FILES['image'])) {
+    $_SESSION['flash'] = ['type' => 'warning', 'message' => 'Please upload a product image.'];
+    header('Location: ' . $redirectUrl);
+    exit;
+}
 
-$stmt->execute([$name, $description, $price, $stock, $imageName]);
+$uploadDir = __DIR__ . '/../assets/images';
+$imageName = null;
+
+try {
+    $imageName = storeUploadedProductImage($_FILES['image'], $uploadDir);
+
+    $stmt = $pdo->prepare('
+        INSERT INTO products (name, description, price, stock, image)
+        VALUES (?, ?, ?, ?, ?)
+    ');
+
+    $stmt->execute([$name, $description, $price, $stock, $imageName]);
+} catch (Throwable $e) {
+    if ($imageName !== null) {
+        $uploadedImagePath = $uploadDir . DIRECTORY_SEPARATOR . $imageName;
+        if (is_file($uploadedImagePath)) {
+            @unlink($uploadedImagePath);
+        }
+    }
+
+    error_log('Admin add product upload failed: ' . $e->getMessage());
+    $_SESSION['flash'] = [
+        'type' => 'danger',
+        'message' => $e instanceof RuntimeException ? $e->getMessage() : 'Unable to add the product right now.',
+    ];
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
+$_SESSION['flash'] = ['type' => 'success', 'message' => 'Product added successfully.'];
 
 header('Location: ' . $redirectUrl);
 exit;

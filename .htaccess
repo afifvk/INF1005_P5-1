@@ -16,6 +16,7 @@ Options -Indexes
     RewriteEngine On
     RewriteRule ^config/ - [F,L]
     RewriteRule ^includes/ - [F,L]
+    RewriteRule ^assets/images/.*\.(php[0-9]?|phtml|phar|cgi|pl|py|sh)$ - [F,L,NC]
 </IfModule>
 
 # Enable GZIP compression for faster page loads
@@ -24,6 +25,10 @@ Options -Indexes
 </IfModule>
 
 # Cache static assets
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+</IfModule>
+
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType text/css         "access plus 1 month"
@@ -31,6 +36,7 @@ Options -Indexes
     ExpiresByType image/svg+xml    "access plus 1 month"
     ExpiresByType image/jpeg       "access plus 1 month"
     ExpiresByType image/png        "access plus 1 month"
+    ExpiresByType image/webp       "access plus 1 month"
 </IfModule>
 
 # Security headers

@@ -95,10 +95,10 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="alert alert-warning border-0 shadow-sm mb-4" role="alert">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                 <div>
-                    <h5 class="alert-heading mb-2">
+                    <h2 class="alert-heading h5 mb-2">
                         <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
                         Inventory Alerts
-                    </h5>
+                    </h2>
                     <p class="mb-1">
                         <?= $lowStockCount ?> item<?= $lowStockCount === 1 ? '' : 's' ?> low on stock
                         and <?= $outOfStockCount ?> item<?= $outOfStockCount === 1 ? '' : 's' ?> out of stock.
@@ -123,7 +123,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <i class="bi bi-people-fill" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h4 class="h5 mb-1">Users</h4>
+                            <h2 class="h5 mb-1">Users</h2>
                             <p class="text-muted mb-0"><?= $totalUsers ?> registered account<?= $totalUsers === 1 ? '' : 's' ?></p>
                         </div>
                     </div>
@@ -141,7 +141,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <i class="bi bi-box-seam" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h4 class="h5 mb-1">Inventory</h4>
+                            <h2 class="h5 mb-1">Inventory</h2>
                             <p class="text-muted mb-0"><?= $lowStockCount ?> low-stock, <?= $outOfStockCount ?> out-of-stock</p>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <i class="bi bi-truck" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h4 class="h5 mb-1">Orders</h4>
+                            <h2 class="h5 mb-1">Orders</h2>
                             <p class="text-muted mb-0"><?= $orderBreakdown['pending'] ?> pending, <?= $orderBreakdown['shipped'] ?> shipped</p>
                         </div>
                     </div>
@@ -174,7 +174,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="col-lg-7">
             <div class="card shadow-sm h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Low Stock Alerts</span>
+                    <h2 class="h6 mb-0">Low Stock Alerts</h2>
                     <span class="badge text-bg-warning"><?= $lowStockCount + $outOfStockCount ?></span>
                 </div>
                 <div class="card-body">
@@ -216,7 +216,9 @@ require_once __DIR__ . '/../includes/header.php';
 
         <div class="col-lg-5">
             <div class="card shadow-sm h-100">
-                <div class="card-header">Order Status Summary</div>
+                <div class="card-header">
+                    <h2 class="h6 mb-0">Order Status Summary</h2>
+                </div>
                 <div class="card-body d-flex flex-column gap-3">
                     <?php foreach (getAdminOrderStatuses() as $statusKey => $statusLabel): ?>
                         <div class="d-flex justify-content-between align-items-center">
@@ -235,4 +237,5 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
+<?php require_once __DIR__ . '/accessibility_landmarks.php'; ?>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
