@@ -5,11 +5,7 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 
-if (!isAdmin()) {
-    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'You do not have permission to access that page.'];
-    header('Location: ' . SITE_URL . '/index.php');
-    exit;
-}
+requireAdminAccess();
 
 $pdo = getDB();
 $pageTitle = 'User Management';
@@ -118,52 +114,62 @@ require_once __DIR__ . '/../includes/header.php';
                     </thead>
                     <tbody>
                         <?php foreach ($users as $user): ?>
+                            <?php $formId = 'update-user-' . (int)$user['id']; ?>
                             <tr>
-                                <form action="update_user.php" method="POST">
-                                    <td>
-                                        <?= (int)$user['id'] ?>
+                                <td>
+                                    <?= (int)$user['id'] ?>
+                                    <form id="<?= $formId ?>" action="<?= SITE_URL ?>/admin/update_users.php" method="POST" class="d-none">
                                         <input type="hidden" name="id" value="<?= (int)$user['id'] ?>">
-                                    </td>
+                                    </form>
+                                </td>
 
-                                    <td>
-                                        <input name="first_name"
-                                               value="<?= htmlspecialchars($user['first_name']) ?>"
-                                               class="form-control form-control-sm"
-                                               aria-label="First name for user <?= (int)$user['id'] ?>">
-                                    </td>
+                                <td>
+                                    <input type="text"
+                                           name="first_name"
+                                           value="<?= e((string)$user['first_name']) ?>"
+                                           class="form-control form-control-sm"
+                                           form="<?= $formId ?>"
+                                           aria-label="First name for user <?= (int)$user['id'] ?>"
+                                           required>
+                                </td>
 
-                                    <td>
-                                        <input name="last_name"
-                                               value="<?= htmlspecialchars($user['last_name']) ?>"
-                                               class="form-control form-control-sm"
-                                               aria-label="Last name for user <?= (int)$user['id'] ?>">
-                                    </td>
+                                <td>
+                                    <input type="text"
+                                           name="last_name"
+                                           value="<?= e((string)$user['last_name']) ?>"
+                                           class="form-control form-control-sm"
+                                           form="<?= $formId ?>"
+                                           aria-label="Last name for user <?= (int)$user['id'] ?>"
+                                           required>
+                                </td>
 
-                                    <td>
-                                        <input name="email"
-                                               value="<?= htmlspecialchars($user['email']) ?>"
-                                               class="form-control form-control-sm"
-                                               aria-label="Email for user <?= (int)$user['id'] ?>">
-                                    </td>
+                                <td>
+                                    <input type="email"
+                                           name="email"
+                                           value="<?= e((string)$user['email']) ?>"
+                                           class="form-control form-control-sm"
+                                           form="<?= $formId ?>"
+                                           aria-label="Email for user <?= (int)$user['id'] ?>"
+                                           required>
+                                </td>
 
-                                    <td>
-                                        <span class="badge <?= $user['role'] === 'admin' ? 'text-bg-danger' : 'text-bg-info' ?>">
-                                            <?= htmlspecialchars(ucfirst($user['role'])) ?>
-                                        </span>
-                                    </td>
+                                <td>
+                                    <span class="badge <?= $user['role'] === 'admin' ? 'text-bg-danger' : 'text-bg-info' ?>">
+                                        <?= e(ucfirst((string)$user['role'])) ?>
+                                    </span>
+                                </td>
 
-                                    <td>
-                                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                                    </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary btn-sm" form="<?= $formId ?>">Save</button>
+                                </td>
 
-                                    <td>
-                                        <a href="delete_user.php?id=<?= (int)$user['id'] ?>"
-                                           onclick="return confirm('Delete this user?')"
-                                           class="btn btn-danger btn-sm">
-                                            Delete
-                                        </a>
-                                    </td>
-                                </form>
+                                <td>
+                                    <a href="<?= SITE_URL ?>/admin/delete_user.php?id=<?= (int)$user['id'] ?>"
+                                       onclick="return confirm('Delete this user?')"
+                                       class="btn btn-danger btn-sm">
+                                        Delete
+                                    </a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
 

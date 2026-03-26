@@ -3,18 +3,10 @@ session_start();
 
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/auth_helpers.php';
 
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['flash'] = ['type' => 'info', 'message' => 'Please log in to access the admin area.'];
-    header('Location: ' . SITE_URL . '/pages/login.php');
-    exit;
-}
-
-if (($_SESSION['role'] ?? '') !== 'admin') {
-    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'You do not have permission to access that page.'];
-    header('Location: ' . SITE_URL . '/index.php');
-    exit;
-}
+requireAdminAccess();
+$csrf = generateCsrfToken();
 
 function manageOrdersStatuses(): array {
     return [

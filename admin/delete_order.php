@@ -5,11 +5,7 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 
-if (!isAdmin()) {
-    $_SESSION['flash'] = ['type' => 'danger', 'message' => 'You do not have permission to perform that action.'];
-    header('Location: ' . SITE_URL . '/index.php');
-    exit;
-}
+requireAdminAccess();
 
 $pdo = getDB();
 

@@ -72,6 +72,7 @@ $returnParams = array_filter(
 );
 
 $returnTo = http_build_query($returnParams);
+$emptyImageSrc = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
@@ -167,7 +168,8 @@ require_once __DIR__ . '/../includes/header.php';
                         <?php
                         $formId = 'update-product-' . (int)$product['id'];
                         $inStock = ((int)$product['stock']) > 0;
-                        $productName = htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8');
+                        $productNameText = (string)($product['name'] ?? '');
+                        $productName = htmlspecialchars($productNameText, ENT_QUOTES, 'UTF-8');
                         $productImg = !empty($product['image'])
                             ? SITE_URL . '/assets/images/' . htmlspecialchars($product['image'], ENT_QUOTES, 'UTF-8')
                             : SITE_URL . '/assets/images/placeholder.svg';
@@ -186,19 +188,20 @@ require_once __DIR__ . '/../includes/header.php';
                                     <img src="<?= $productImg ?>"
                                          alt="<?= $productName ?>"
                                          width="70"
-                                         class="img-thumbnail"
+                                         class="img-thumbnail js-open-image-modal"
+                                         data-image-name="<?= $productName ?>"
                                          onerror="this.src='<?= SITE_URL ?>/assets/images/placeholder.svg'"
                                          style="cursor:pointer;"
                                          role="button"
                                          tabindex="0"
-                                         aria-label="View larger image of <?= $productName ?>"
-                                         onclick="openImageModal(this.src, '<?= $productName ?>')"
-                                         onkeydown="if(event.key==='Enter')this.click()">
+                                         aria-label="View larger image of <?= $productName ?>">
                                     <button type="button"
-                                            class="btn btn-outline-secondary btn-sm"
+                                            class="btn btn-outline-secondary btn-sm js-open-change-image-modal"
                                             style="font-size: 0.7rem;"
                                             aria-label="Change image for <?= $productName ?>"
-                                            onclick="openChangeImageModal(<?= (int)$product['id'] ?>, '<?= $productName ?>', '<?= $productImg ?>')">
+                                            data-product-id="<?= (int)$product['id'] ?>"
+                                            data-product-name="<?= $productName ?>"
+                                            data-product-img="<?= htmlspecialchars($productImg, ENT_QUOTES, 'UTF-8') ?>">
                                         <i class="bi bi-pencil-square" aria-hidden="true"></i> Change
                                     </button>
                                 </div>
@@ -290,28 +293,28 @@ require_once __DIR__ . '/../includes/header.php';
                     <input type="hidden" name="return_to" value="<?= htmlspecialchars($returnTo, ENT_QUOTES, 'UTF-8') ?>">
 
                     <div class="col-12">
-                        <label class="form-label">Product Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="add-product-name" class="form-label">Product Name</label>
+                        <input type="text" id="add-product-name" name="name" class="form-control" required>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="4" required></textarea>
+                        <label for="add-product-description" class="form-label">Description</label>
+                        <textarea id="add-product-description" name="description" class="form-control" rows="4" required></textarea>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Price</label>
-                        <input type="number" name="price" step="0.01" min="0" class="form-control" required>
+                        <label for="add-product-price" class="form-label">Price</label>
+                        <input type="number" id="add-product-price" name="price" step="0.01" min="0" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Inventory Amount</label>
-                        <input type="number" name="stock" min="0" class="form-control" required>
+                        <label for="add-product-stock" class="form-label">Inventory Amount</label>
+                        <input type="number" id="add-product-stock" name="stock" min="0" class="form-control" required>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Product Image</label>
-                        <input type="file" name="image" accept="image/jpeg,image/png" class="form-control" required>
+                        <label for="add-product-image" class="form-label">Product Image</label>
+                        <input type="file" id="add-product-image" name="image" accept="image/jpeg,image/png" class="form-control" required>
                         <div class="form-text">Accepted formats: JPG and PNG. Max size: 5 MB.</div>
                     </div>
 
@@ -335,7 +338,7 @@ require_once __DIR__ . '/../includes/header.php';
             </div>
             <div class="modal-body text-center p-4">
                 <img id="lightbox-img"
-                     src=""
+                     src="<?= $emptyImageSrc ?>"
                      alt=""
                      class="img-fluid rounded shadow"
                      style="max-height: 70vh; object-fit: contain;"
@@ -359,7 +362,7 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="modal-body">
                     <div class="text-center mb-3">
                         <img id="changeImagePreview"
-                             src=""
+                             src="<?= $emptyImageSrc ?>"
                              alt=""
                              class="img-fluid rounded shadow-sm"
                              style="max-height: 200px; object-fit: contain;"
@@ -372,8 +375,7 @@ require_once __DIR__ . '/../includes/header.php';
                                name="image"
                                accept="image/jpeg,image/png"
                                class="form-control"
-                               required
-                               onchange="if(this.files[0]){document.getElementById('changeImagePreview').src=URL.createObjectURL(this.files[0])}">
+                               required>
                         <div class="form-text">Accepted formats: JPG and PNG. Max size: 5 MB.</div>
                     </div>
                 </div>
@@ -402,6 +404,39 @@ function openChangeImageModal(productId, productName, currentImgSrc) {
     document.getElementById('changeImageFile').value = '';
     new bootstrap.Modal(document.getElementById('changeImageModal')).show();
 }
+</script>
+
+<script>
+document.querySelectorAll('.js-open-image-modal').forEach(function (image) {
+    var imageName = image.getAttribute('data-image-name') || '';
+
+    image.addEventListener('click', function () {
+        openImageModal(image.src, imageName);
+    });
+
+    image.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openImageModal(image.src, imageName);
+        }
+    });
+});
+
+document.querySelectorAll('.js-open-change-image-modal').forEach(function (button) {
+    button.addEventListener('click', function () {
+        openChangeImageModal(
+            button.getAttribute('data-product-id'),
+            button.getAttribute('data-product-name') || '',
+            button.getAttribute('data-product-img') || '<?= $emptyImageSrc ?>'
+        );
+    });
+});
+
+document.getElementById('changeImageFile').addEventListener('change', function () {
+    if (this.files && this.files[0]) {
+        document.getElementById('changeImagePreview').src = URL.createObjectURL(this.files[0]);
+    }
+});
 </script>
 
 <?php require_once __DIR__ . '/accessibility_landmarks.php'; ?>
