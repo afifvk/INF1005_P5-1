@@ -291,6 +291,21 @@ $quizCatalog = array_map(static function ($p) {
                              onerror="this.src='/assets/images/placeholder.svg'">
                     </div>
                     <div class="card-body">
+                        <div class="d-flex justify-content-end mb-2">
+                            <?php if (isLoggedIn()): ?>
+                            <button data-like-button="true"
+                                    data-product-id="<?= (int)$product['id'] ?>"
+                                    class="tea-like-btn<?= in_array((int)$product['id'], $likedProductIds ?? []) ? ' is-liked' : '' ?>"
+                                    aria-label="<?= in_array((int)$product['id'], $likedProductIds ?? []) ? 'Unlike' : 'Like' ?> <?= e($product['name']) ?>"
+                                    aria-pressed="<?= in_array((int)$product['id'], $likedProductIds ?? []) ? 'true' : 'false' ?>">
+                                <i class="bi <?= in_array((int)$product['id'], $likedProductIds ?? []) ? 'bi-heart-fill' : 'bi-heart' ?>" aria-hidden="true"></i>
+                            </button>
+                            <?php else: ?>
+                            <a href="/pages/login.php" class="tea-like-btn" aria-label="Log in to like <?= e($product['name']) ?>">
+                                <i class="bi bi-heart" aria-hidden="true"></i>
+                            </a>
+                            <?php endif; ?>
+                        </div>
                         <h3 class="product-name"><?= e($product['name']) ?></h3>
                         <p class="product-desc"><?= e(substr($product['description'], 0, 100)) ?>…</p>
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">

@@ -7,6 +7,7 @@
 require_once dirname(__DIR__) . '/config/app.php';
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/includes/product_helpers.php';
+require_once dirname(__DIR__) . '/includes/liked_helpers.php';
 require_once dirname(__DIR__) . '/includes/tea_helpers.php';
 
 if (empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
@@ -22,6 +23,7 @@ $sort     = isset($_GET['sort'])     ? trim($_GET['sort'])           : 'name_asc
 $search   = isset($_GET['search'])   ? trim($_GET['search'])         : '';
 
 $products = getFilteredTeas($flavours, $benefits, $caffeine, $origins, $sort, $search);
+$likedIds = isLoggedIn() ? getLikedProductIdsByUser((int)$_SESSION['user_id']) : [];
 
 if (empty($products)): ?>
     <div class="text-center py-5">
@@ -43,6 +45,24 @@ if (empty($products)): ?>
                     </div>
                 </a>
                 <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-end mb-2">
+                        <?php if (isLoggedIn()): ?>
+                            <?php $isLiked = in_array((int)$product['id'], $likedIds, true); ?>
+                            <button type="button"
+                                    class="tea-like-btn <?= $isLiked ? 'is-liked' : '' ?>"
+                                    data-like-button="true"
+                                    data-product-id="<?= (int)$product['id'] ?>"
+                                    aria-pressed="<?= $isLiked ? 'true' : 'false' ?>"
+                                    aria-label="<?= $isLiked ? 'Remove from liked teas' : 'Add to liked teas' ?>">
+                                <i class="bi <?= $isLiked ? 'bi-heart-fill' : 'bi-heart' ?>" aria-hidden="true"></i>
+                            </button>
+                        <?php else: ?>
+                            <a href="login.php" class="tea-like-btn" aria-label="Login to save liked teas">
+                                <i class="bi bi-heart" aria-hidden="true"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
                     <span class="caffeine-badge caffeine-badge--<?= strtolower(e($product['caffeine_level'])) ?>">
                         <?= e($product['caffeine_level']) ?> Caffeine
                     </span>

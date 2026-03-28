@@ -55,7 +55,22 @@ require_once __DIR__ . '/../includes/header.php';
             <!-- Product Info -->
             <div class="col-md-7">
 
-                <h1 id="product-heading" class="mb-2"><?= e($product['name']) ?></h1>
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <h1 id="product-heading" class="mb-0"><?= e($product['name']) ?></h1>
+                    <?php if (isLoggedIn()): ?>
+                    <button data-like-button="true"
+                            data-product-id="<?= (int)$product['id'] ?>"
+                            class="tea-like-btn<?= in_array((int)$product['id'], $likedProductIds ?? []) ? ' is-liked' : '' ?>"
+                            aria-label="<?= in_array((int)$product['id'], $likedProductIds ?? []) ? 'Unlike' : 'Like' ?> <?= e($product['name']) ?>"
+                            aria-pressed="<?= in_array((int)$product['id'], $likedProductIds ?? []) ? 'true' : 'false' ?>">
+                        <i class="bi <?= in_array((int)$product['id'], $likedProductIds ?? []) ? 'bi-heart-fill' : 'bi-heart' ?>" aria-hidden="true"></i>
+                    </button>
+                    <?php else: ?>
+                    <a href="login.php" class="tea-like-btn" aria-label="Log in to like <?= e($product['name']) ?>">
+                        <i class="bi bi-heart" aria-hidden="true"></i>
+                    </a>
+                    <?php endif; ?>
+                </div>
 
                 <!-- Stock status -->
                 <div class="mb-3">
