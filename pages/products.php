@@ -41,9 +41,9 @@ $products = getAllProducts();
 }
 .filter-clear-btn {
     font-size: .75rem;
-    color: rgba(255,255,255,.75);
+    color: #fff;
     background: none;
-    border: 1px solid rgba(255,255,255,.3);
+    border: 1px solid rgba(255,255,255,.6);
     border-radius: 20px;
     padding: 3px 10px;
     cursor: pointer;
@@ -134,7 +134,7 @@ $products = getAllProducts();
 .caffeine-medium input:checked + label { background: #c9a84c; border-color: #c9a84c; }
 .caffeine-high   input:checked + label { background: #c0572a; border-color: #c0572a; }
 
-.results-count { font-size: .88rem; color: #777; margin-bottom: 16px; min-height: 1.2em; }
+.results-count { font-size: .88rem; color: #666; margin-bottom: 16px; min-height: 1.2em; }
 .results-count strong { color: #1e2d24; }
 
 .filter-loading { display: none; text-align: center; padding: 48px 0; }
@@ -160,9 +160,9 @@ $products = getAllProducts();
     letter-spacing: .05em;
     margin-bottom: 6px;
 }
-.caffeine-badge--none   { background: #6aaa6a; }
-.caffeine-badge--low    { background: #89b04a; }
-.caffeine-badge--medium { background: #c9a84c; }
+.caffeine-badge--none   { background: #6aaa6a; color: #0f2e0f; }
+.caffeine-badge--low    { background: #89b04a; color: #1a2d00; }
+.caffeine-badge--medium { background: #c9a84c; color: #2d1f00; }
 .caffeine-badge--high   { background: #c0572a; }
 
 .tea-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
