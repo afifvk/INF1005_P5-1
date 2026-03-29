@@ -281,11 +281,11 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
-<div class="modal fade" id="addInventoryModal" tabindex="-1" aria-labelledby="addInventoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="addInventoryModal" tabindex="-1" role="dialog" aria-labelledby="addInventoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addInventoryModalLabel">Add Inventory</h5>
+                <h2 class="modal-title" id="addInventoryModalLabel">Add Inventory</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -329,17 +329,17 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <!-- Image Lightbox Modal -->
-<div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-labelledby="imageLightboxLabel" aria-hidden="true">
+<div class="modal fade" id="imageLightboxModal" tabindex="-1" role="dialog" aria-labelledby="imageLightboxLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="imageLightboxLabel">Product Image</h5>
+                <h2 class="modal-title" id="imageLightboxLabel">Product Image</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center p-4">
                 <img id="lightbox-img"
-                     src="<?= $emptyImageSrc ?>"
-                     alt=""
+                     src="<?= $emptyImageSrc ?: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==' ?>"
+                     alt="Product image preview"
                      class="img-fluid rounded shadow"
                      style="max-height: 70vh; object-fit: contain;"
                      onerror="this.src='<?= SITE_URL ?>/assets/images/placeholder.svg'">
@@ -349,11 +349,11 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <!-- Change Image Modal -->
-<div class="modal fade" id="changeImageModal" tabindex="-1" aria-labelledby="changeImageModalLabel" aria-hidden="true">
+<div class="modal fade" id="changeImageModal" tabindex="-1" role="dialog" aria-labelledby="changeImageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="changeImageModalLabel">Change Product Image</h5>
+                <h2 class="modal-title" id="changeImageModalLabel">Change Product Image</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= SITE_URL ?>/admin/update_product_image.php" method="POST" enctype="multipart/form-data">
@@ -362,8 +362,8 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="modal-body">
                     <div class="text-center mb-3">
                         <img id="changeImagePreview"
-                             src="<?= $emptyImageSrc ?>"
-                             alt=""
+                             src="<?= $emptyImageSrc ?: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==' ?>"
+                             alt="Current product image"
                              class="img-fluid rounded shadow-sm"
                              style="max-height: 200px; object-fit: contain;"
                              onerror="this.src='<?= SITE_URL ?>/assets/images/placeholder.svg'">
