@@ -297,7 +297,7 @@ img {
     font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-highlight);
+    color: #8c6d30; /* A darker gold/bronze that passes WCAG AA */
     margin-bottom: 0.75rem;
 }
 
@@ -370,6 +370,37 @@ img {
     line-height: 1.55;
 }
 
+.tea-like-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: #fff;
+    color: #b54757;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.tea-like-btn:hover {
+    transform: translateY(-1px);
+    border-color: #d36b79;
+    color: #a92f43;
+    box-shadow: 0 6px 18px rgba(169, 47, 67, 0.18);
+}
+
+.tea-like-btn:focus-visible {
+    outline: 2px solid #a92f43;
+    outline-offset: 2px;
+}
+
+.tea-like-btn.is-liked {
+    color: #a92f43;
+    border-color: #d36b79;
+    background: #fff4f6;
+}
+
 /* ---------- Product Detail ---------- */
 .product-detail-img {
     border-radius: var(--radius-lg);
@@ -402,11 +433,11 @@ img {
 }
 .stock-badge.in-stock {
     background: rgba(39,174,96,0.12);
-    color: var(--color-success);
+    color: #135e30;
 }
 .stock-badge.out-of-stock {
     background: rgba(192,57,43,0.12);
-    color: var(--color-danger);
+    color: #7a1c10;
 }
 
 /* ---------- Cart ---------- */

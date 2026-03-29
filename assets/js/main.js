@@ -237,6 +237,87 @@ document.addEventListener('DOMContentLoaded', function() {
     var quizCancel = document.getElementById('quiz-cancel');
     var APP = window.__APP__ || { isLoggedIn: false, csrfToken: '' };
     var quizCatalog = Array.isArray(APP.quizCatalog) ? APP.quizCatalog : [];
+    var likedSet = new Set((Array.isArray(APP.likedProductIds) ? APP.likedProductIds : []).map(function(id) {
+        return Number(id) || 0;
+    }).filter(function(id) {
+        return id > 0;
+    }));
+
+    function setLikeButtonState(btn, liked) {
+        if (!btn) return;
+        btn.classList.toggle('is-liked', liked);
+        btn.setAttribute('aria-pressed', liked ? 'true' : 'false');
+        btn.setAttribute('aria-label', liked ? 'Remove from liked teas' : 'Add to liked teas');
+        var icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = 'bi ' + (liked ? 'bi-heart-fill' : 'bi-heart');
+        }
+    }
+
+    function syncLikeButtons(productId, liked) {
+        document.querySelectorAll('[data-like-button="true"][data-product-id="' + productId + '"]').forEach(function(btn) {
+            setLikeButtonState(btn, liked);
+        });
+    }
+
+    function toggleLike(productId, triggerBtn) {
+        var data = new FormData();
+        data.append('product_id', String(productId));
+        data.append('csrf_token', APP.csrfToken || '');
+
+        if (triggerBtn) triggerBtn.disabled = true;
+
+        fetch((APP.siteUrl || window.location.origin) + '/pages/liked_action.php', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: data
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(json) {
+            if (!json || !json.success) {
+                showNotification((json && json.message) || 'Could not update liked teas.', 'error');
+                return;
+            }
+
+            if (json.liked) {
+                likedSet.add(productId);
+            } else {
+                likedSet.delete(productId);
+            }
+
+            syncLikeButtons(productId, !!json.liked);
+            showNotification(json.message || (json.liked ? 'Added to liked teas.' : 'Removed from liked teas.'), 'success');
+
+            if (triggerBtn && triggerBtn.hasAttribute('data-remove-on-unlike') && !json.liked) {
+                var card = triggerBtn.closest('.col-md-6, .col-sm-6, .col-lg-4, .col-xl-4');
+                if (card && card.parentNode) {
+                    card.remove();
+                }
+            }
+        })
+        .catch(function() {
+            showNotification('Could not update liked teas. Please try again.', 'error');
+        })
+        .finally(function() {
+            if (triggerBtn) triggerBtn.disabled = false;
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        var likeBtn = e.target.closest('[data-like-button="true"]');
+        if (!likeBtn) return;
+
+        e.preventDefault();
+
+        if (!APP.isLoggedIn) {
+            window.location.href = (APP.siteUrl || '') + '/pages/login.php';
+            return;
+        }
+
+        var productId = Number(likeBtn.getAttribute('data-product-id') || 0);
+        if (productId < 1) return;
+        toggleLike(productId, likeBtn);
+    });
 
     function textIncludesAny(text, words) {
         return words.some(function(word) { return text.indexOf(word) !== -1; });
@@ -417,11 +498,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 suggestions.forEach(function(s, idx) {
+                    var isLikedSuggestion = s.id > 0 && likedSet.has(s.id);
                     html += '<div class="col-md-6"><div class="value-card">'
                         + '<h4>' + s.title + '</h4>'
                         + '<p class="text-muted">' + s.desc + '</p>';
 
                     if (s.id > 0) {
+                        if (APP.isLoggedIn) {
+                            html += '<div class="d-flex justify-content-end">'
+                                + '<button type="button" class="tea-like-btn ' + (isLikedSuggestion ? 'is-liked' : '') + '" '
+                                + 'data-like-button="true" data-product-id="' + s.id + '" '
+                                + 'aria-pressed="' + (isLikedSuggestion ? 'true' : 'false') + '" '
+                                + 'aria-label="' + (isLikedSuggestion ? 'Remove from liked teas' : 'Add to liked teas') + '">'
+                                + '<i class="bi ' + (isLikedSuggestion ? 'bi-heart-fill' : 'bi-heart') + '" aria-hidden="true"></i>'
+                                + '</button></div>';
+                        }
                         html += '<a class="btn-store-outline mt-2 d-inline-block" href="/pages/product_detail.php?id=' + s.id + '">View tea</a>';
                     }
 
@@ -541,7 +632,27 @@ document.addEventListener('DOMContentLoaded', function() {
         var chatbotInput = document.getElementById('chatbot-input');
         var chatbotMessages = document.getElementById('chatbot-messages');
         var chatbotSend = document.getElementById('chatbot-send');
-        var chatHistory = [];
+
+        // ── sessionStorage helpers ───────────────────────────
+        var CHAT_STORAGE_KEY = 'teabot_history';
+
+        function loadChatHistory() {
+            try {
+                var raw = sessionStorage.getItem(CHAT_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveChatHistory() {
+            try {
+                sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatHistory));
+            } catch (e) {}
+        }
+
+        // Load persisted history on page load
+        var chatHistory = loadChatHistory();
 
         function appendChatMessage(text, role) {
             if (!chatbotMessages) return;
@@ -550,6 +661,14 @@ document.addEventListener('DOMContentLoaded', function() {
             msg.textContent = text;
             chatbotMessages.appendChild(msg);
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Restore previous messages into the UI if history exists
+        if (chatHistory.length > 0 && chatbotMessages) {
+            chatbotMessages.innerHTML = ''; // clear default greeting
+            chatHistory.forEach(function(item) {
+                appendChatMessage(item.text, item.role === 'model' ? 'bot' : 'user');
+            });
         }
 
         function setChatOpen(open) {
@@ -587,6 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 appendChatMessage(message, 'user');
                 chatHistory.push({ role: 'user', text: message });
+                saveChatHistory();
                 if (chatbotInput) chatbotInput.value = '';
                 if (chatbotSend) chatbotSend.disabled = true;
 
@@ -613,6 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (data && data.success && data.reply) {
                             appendChatMessage(data.reply, 'bot');
                             chatHistory.push({ role: 'model', text: data.reply });
+                            saveChatHistory();
                         } else {
                             appendChatMessage((data && data.message) || 'Sorry, the chatbot is unavailable right now.', 'bot');
                         }

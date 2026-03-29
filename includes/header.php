@@ -8,6 +8,7 @@ require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../includes/cart_helpers.php';
+require_once __DIR__ . '/../includes/liked_helpers.php';
 
 if (!defined('SKIP_PAGE_RATE_LIMIT')) {
     enforcePageRateLimit();
@@ -15,6 +16,7 @@ if (!defined('SKIP_PAGE_RATE_LIMIT')) {
 
 $cartCount = isLoggedIn() ? getCartCount($_SESSION['user_id']) : 0;
 $csrf = generateCsrfToken();
+$likedProductIds = isLoggedIn() ? getLikedProductIdsByUser((int)$_SESSION['user_id']) : [];
 
 // Helper: display name — first name if set, otherwise last name
 $displayName = '';
@@ -41,7 +43,7 @@ if (isLoggedIn()) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=3">
+    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=5">
 </head>
 <body>  
 

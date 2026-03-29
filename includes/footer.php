@@ -104,6 +104,7 @@ window.__APP__.isLoggedIn = <?= isLoggedIn() ? 'true' : 'false' ?>;
 window.__APP__.csrfToken = '<?= e($csrf) ?>';
 window.__APP__.siteUrl = '<?= e(SITE_URL) ?>';
 window.__APP__.geminiChatEnabled = <?= (defined('ENABLE_GEMINI_CHATBOT') && ENABLE_GEMINI_CHATBOT) ? 'true' : 'false' ?>;
+window.__APP__.likedProductIds = <?= json_encode(array_values($likedProductIds ?? []), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
 
 <!-- Bootstrap 5 JS Bundle -->
@@ -112,7 +113,7 @@ window.__APP__.geminiChatEnabled = <?= (defined('ENABLE_GEMINI_CHATBOT') && ENAB
         crossorigin="anonymous"></script>
 
 <!-- Custom JS -->
-<script src="<?= SITE_URL ?>/assets/js/main.js"></script>
+<script src="<?= SITE_URL ?>/assets/js/main.js?v=5"></script>
 
 <!-- Add to Cart AJAX + Toast -->
 <script>
