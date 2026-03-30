@@ -202,7 +202,8 @@ $user   = getUserById($userId);
                             <i class="bi bi-exclamation-circle me-1"></i>
                             Please <a href="profile.php" class="text-decoration-underline">add a shipping address</a> before checking out.
                         </p>
-                        <button class="btn-gold w-100 py-3 rounded" disabled>
+                        <button class="btn-gold w-100 py-3 rounded" 
+                                onclick="alert('Please add a shipping address to your profile before checking out.'); window.location.href='profile.php';">
                             <i class="bi bi-lock me-1" aria-hidden="true"></i>
                             Proceed to Checkout
                         </button>

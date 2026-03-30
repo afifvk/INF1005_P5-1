@@ -29,6 +29,7 @@ function getDB(): PDO {
 
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+            $pdo->exec("SET time_zone = '+08:00'");
         } catch (PDOException $e) {
             // Never expose raw DB errors to users — log them instead
             error_log("DB Connection Error: " . $e->getMessage());
