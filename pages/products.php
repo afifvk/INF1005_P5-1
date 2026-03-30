@@ -16,186 +16,6 @@ $caffeine = ['None', 'Low', 'Medium', 'High'];
 $products = getAllProducts();
 ?>
 
-<style>
-/* ── Filter Sidebar ─────────────────────────────────── */
-.filter-sidebar {
-    background: #fff;
-    border: 1px solid #e8e2d9;
-    border-radius: 12px;
-    overflow: hidden;
-    position: sticky;
-    top: 20px;
-}
-.filter-sidebar__header {
-    background: #3d6b4f;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.filter-sidebar__title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 0;
-}
-.filter-clear-btn {
-    font-size: .75rem;
-    color: #fff;
-    background: none;
-    border: 1px solid rgba(255,255,255,.6);
-    border-radius: 20px;
-    padding: 3px 10px;
-    cursor: pointer;
-    transition: all .2s;
-}
-.filter-clear-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
-
-.filter-section {
-    padding: 16px 18px;
-    border-bottom: 1px solid #f0ece4;
-}
-.filter-section:last-child { border-bottom: none; }
-.filter-section__label {
-    font-size: .7rem;
-    font-weight: 600;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: #7c5c3e;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.filter-search {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1.5px solid #ddd6c9;
-    border-radius: 8px;
-    font-size: .88rem;
-    outline: none;
-    transition: border-color .2s;
-}
-.filter-search:focus { border-color: #3d6b4f; }
-
-.filter-sort {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1.5px solid #ddd6c9;
-    border-radius: 8px;
-    font-size: .88rem;
-    background: #faf8f4;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233d6b4f' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    cursor: pointer;
-}
-.filter-sort:focus { outline: none; border-color: #3d6b4f; }
-
-.filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-
-/* Accessible visually-hidden checkbox — still focusable by keyboard */
-.filter-pill input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-}
-.filter-pill label {
-    display: inline-block;
-    padding: 4px 11px;
-    border-radius: 20px;
-    border: 1.5px solid #ddd6c9;
-    font-size: .78rem;
-    color: #555;
-    cursor: pointer;
-    transition: all .2s;
-    user-select: none;
-}
-.filter-pill input:checked + label {
-    background: #3d6b4f;
-    border-color: #3d6b4f;
-    color: #fff;
-    font-weight: 500;
-}
-.filter-pill label:hover { border-color: #3d6b4f; color: #3d6b4f; }
-
-/* Keyboard focus ring on pill labels */
-.filter-pill input:focus-visible + label {
-    outline: 2px solid #3d6b4f;
-    outline-offset: 2px;
-}
-
-.caffeine-none   input:checked + label { background: #6aaa6a; border-color: #6aaa6a; }
-.caffeine-low    input:checked + label { background: #89b04a; border-color: #89b04a; }
-.caffeine-medium input:checked + label { background: #c9a84c; border-color: #c9a84c; }
-.caffeine-high   input:checked + label { background: #c0572a; border-color: #c0572a; }
-
-/* AXE fix: darkened from #666 to #444 to pass WCAG AA contrast ratio */
-.results-count { font-size: .88rem; color: #444; margin-bottom: 16px; min-height: 1.2em; }
-.results-count strong { color: #1e2d24; }
-
-.filter-loading { display: none; text-align: center; padding: 48px 0; }
-.filter-loading.is-active { display: block; }
-.filter-spinner {
-    width: 36px; height: 36px;
-    border: 3px solid #e0d9ce;
-    border-top-color: #3d6b4f;
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    margin: 0 auto 12px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.caffeine-badge {
-    display: inline-block;
-    font-size: .68rem;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 20px;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 6px;
-}
-/* AXE fix: darker backgrounds so white text passes WCAG AA 4.5:1 contrast ratio */
-.caffeine-badge--none   { background: #4a8c4a; }
-.caffeine-badge--low    { background: #6a8c30; }
-.caffeine-badge--medium { background: #a07c20; }
-.caffeine-badge--high   { background: #c0572a; }
-
-.tea-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
-.tea-tag {
-    font-size: .68rem;
-    background: #f5f0e8;
-    color: #7c5c3e;
-    padding: 2px 8px;
-    border-radius: 20px;
-}
-
-@media (max-width: 767px) {
-    .filter-sidebar { position: static; margin-bottom: 24px; }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(16px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.product-card {
-    animation: fadeInUp 0.3s ease both;
-}
-</style>
-
 <!-- W3C/AXE fix: <section> changed to <div> so <aside> is not nested inside a landmark element -->
 <div class="section-pad">
     <div class="container">
@@ -248,8 +68,8 @@ $products = getAllProducts();
                         <div class="filter-pills" role="group" aria-labelledby="flavour-group-label">
                             <?php foreach ($flavours as $f): ?>
                             <div class="filter-pill">
-                                <input type="checkbox" id="fl-<?= e($f) ?>" name="flavours[]" value="<?= e($f) ?>">
-                                <label for="fl-<?= e($f) ?>"><?= e($f) ?></label>
+                                <input type="checkbox" id="fl-<?= e(str_replace(' ', '-', $f)) ?>" name="flavours[]" value="<?= e($f) ?>">
+                                <label for="fl-<?= e(str_replace(' ', '-', $f)) ?>"><?= e($f) ?></label>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -260,8 +80,8 @@ $products = getAllProducts();
                         <div class="filter-pills" role="group" aria-labelledby="caffeine-group-label">
                             <?php foreach ($caffeine as $c): ?>
                             <div class="filter-pill caffeine-<?= strtolower(e($c)) ?>">
-                                <input type="checkbox" id="caf-<?= e($c) ?>" name="caffeine[]" value="<?= e($c) ?>">
-                                <label for="caf-<?= e($c) ?>"><?= e($c) ?></label>
+                                <input type="checkbox" id="caf-<?= e(str_replace(' ', '-', $c)) ?>" name="caffeine[]" value="<?= e($c) ?>">
+                                <label for="caf-<?= e(str_replace(' ', '-', $c)) ?>"><?= e($c) ?></label>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -272,8 +92,9 @@ $products = getAllProducts();
                         <div class="filter-pills" role="group" aria-labelledby="benefits-group-label">
                             <?php foreach ($benefits as $b): ?>
                             <div class="filter-pill">
-                                <input type="checkbox" id="ben-<?= e($b) ?>" name="benefits[]" value="<?= e($b) ?>">
-                                <label for="ben-<?= e($b) ?>"><?= e($b) ?></label>
+                                <!-- W3C fix: spaces replaced with hyphens in id/for attributes -->
+                                <input type="checkbox" id="ben-<?= e(str_replace(' ', '-', $b)) ?>" name="benefits[]" value="<?= e($b) ?>">
+                                <label for="ben-<?= e(str_replace(' ', '-', $b)) ?>"><?= e($b) ?></label>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -284,8 +105,9 @@ $products = getAllProducts();
                         <div class="filter-pills" role="group" aria-labelledby="origin-group-label">
                             <?php foreach ($origins as $o): ?>
                             <div class="filter-pill">
-                                <input type="checkbox" id="ori-<?= e($o) ?>" name="origins[]" value="<?= e($o) ?>">
-                                <label for="ori-<?= e($o) ?>"><?= e($o) ?></label>
+                                <!-- W3C fix: spaces replaced with hyphens in id/for attributes -->
+                                <input type="checkbox" id="ori-<?= e(str_replace(' ', '-', $o)) ?>" name="origins[]" value="<?= e($o) ?>">
+                                <label for="ori-<?= e(str_replace(' ', '-', $o)) ?>"><?= e($o) ?></label>
                             </div>
                             <?php endforeach; ?>
                         </div>

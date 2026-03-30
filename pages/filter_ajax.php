@@ -36,33 +36,37 @@ if (empty($products)): ?>
         <?php foreach ($products as $product): ?>
         <div class="col-sm-6 col-lg-4">
             <article class="product-card h-100">
-                <a href="product_detail.php?id=<?= (int)$product['id'] ?>">
-                    <div class="card-img-wrapper">
+
+                <!-- Image with heart overlaid in top-right corner -->
+                <div class="card-img-wrapper" style="position:relative;">
+                    <a href="product_detail.php?id=<?= (int)$product['id'] ?>">
                         <img src="/assets/images/<?= e($product['image']) ?>"
                              alt="<?= e($product['name']) ?>"
                              loading="lazy"
                              onerror="this.src='/assets/images/placeholder.svg'">
-                    </div>
-                </a>
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-end mb-2">
-                        <?php if (isLoggedIn()): ?>
-                            <?php $isLiked = in_array((int)$product['id'], $likedIds, true); ?>
-                            <button type="button"
-                                    class="tea-like-btn <?= $isLiked ? 'is-liked' : '' ?>"
-                                    data-like-button="true"
-                                    data-product-id="<?= (int)$product['id'] ?>"
-                                    aria-pressed="<?= $isLiked ? 'true' : 'false' ?>"
-                                    aria-label="<?= $isLiked ? 'Remove from liked teas' : 'Add to liked teas' ?>">
-                                <i class="bi <?= $isLiked ? 'bi-heart-fill' : 'bi-heart' ?>" aria-hidden="true"></i>
-                            </button>
-                        <?php else: ?>
-                            <a href="login.php" class="tea-like-btn" aria-label="Login to save liked teas">
-                                <i class="bi bi-heart" aria-hidden="true"></i>
-                            </a>
-                        <?php endif; ?>
-                    </div>
+                    </a>
+                    <?php if (isLoggedIn()): ?>
+                        <?php $isLiked = in_array((int)$product['id'], $likedIds, true); ?>
+                        <button type="button"
+                                class="tea-like-btn <?= $isLiked ? 'is-liked' : '' ?>"
+                                data-like-button="true"
+                                data-product-id="<?= (int)$product['id'] ?>"
+                                aria-pressed="<?= $isLiked ? 'true' : 'false' ?>"
+                                aria-label="<?= $isLiked ? 'Remove from liked teas' : 'Add to liked teas' ?>"
+                                style="position:absolute;top:10px;right:10px;">
+                            <i class="bi <?= $isLiked ? 'bi-heart-fill' : 'bi-heart' ?>" aria-hidden="true"></i>
+                        </button>
+                    <?php else: ?>
+                        <a href="login.php"
+                           class="tea-like-btn"
+                           aria-label="Login to save liked teas"
+                           style="position:absolute;top:10px;right:10px;">
+                            <i class="bi bi-heart" aria-hidden="true"></i>
+                        </a>
+                    <?php endif; ?>
+                </div>
 
+                <div class="card-body d-flex flex-column">
                     <span class="caffeine-badge caffeine-badge--<?= strtolower(e($product['caffeine_level'])) ?>">
                         <?= e($product['caffeine_level']) ?> Caffeine
                     </span>
@@ -112,6 +116,7 @@ if (empty($products)): ?>
                         </div>
                     </div>
                 </div>
+
             </article>
         </div>
         <?php endforeach; ?>
