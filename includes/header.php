@@ -44,6 +44,9 @@ if (isLoggedIn()) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= SITE_URL ?>/assets/images/favicon.png?v=1">
+    <link rel="shortcut icon" href="<?= SITE_URL ?>/assets/images/favicon.png?v=1">
+
 </head>
 <body>  
 
